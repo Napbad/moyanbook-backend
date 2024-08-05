@@ -1,0 +1,95 @@
+# 配置Spring数据源
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway
+  profiles:
+    include: dev
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${moyan.nacos.discovery.server-addr}
+        username: ${moyan.nacos.discovery.username}
+        password: ${moyan.nacos.discovery.password}
+        group: ${moyan.nacos.discovery.group}
+        namespace: ${moyan.nacos.discovery.namespace}
+    loadbalancer:
+      enabled: true
+    gateway:
+      enabled: true
+      routes:
+        - id: service-user1
+          uri: lb://service-user
+          predicates:
+            - Path=/user/**
+        - id: service-user2
+          uri: lb://service-user
+          predicates:
+            - Path=/user-info/**
+        - id: service-user3
+          uri: lb://service-user
+          predicates:
+            - Path=/search/
+        - id: service-common
+          uri: lb://service-common
+          predicates:
+            - Path=/test/**
+        - id: service-member
+          uri: lb://service-member
+          predicates:
+            - Path=/member/**
+            - Path=/member-work/**
+            - Path=/member-info/**
+        - id: service-admin
+          uri: lb://service-admin
+          predicates:
+            - Path=/admin/**
+            - Path=/admin-manage/**
+
+
+  mail:
+    protocol: ${moyan.mail.protocol}
+    host: ${moyan.mail.host}
+    port: ${moyan.mail.port}
+    username: ${moyan.mail.username}
+    password: ${moyan.mail.password}
+    test-connection: ${moyan.mail.test-connection}
+    properties:
+      mail:
+        smtp:
+          auth: ${moyan.mail.properties.mail.smtp.auth}
+        debug: ${moyan.mail.properties.mail.debug}
+        mime:
+          parameterization: ${moyan.mail.properties.mail.mime.parameterization}
+  datasource:
+    # MySQL驱动类名
+    driver-class-name: ${moyan.datasource.driver-class-name}
+    # 数据库连接URL
+    url: ${moyan.datasource.url}
+    # 数据库用户名
+    username: ${moyan.datasource.username}
+    # 数据库密码
+    password: ${moyan.datasource.password}
+    # 数据源类型，使用Druid连接池
+    type: ${moyan.datasource.type}
+moyanshushe:
+  jwt:
+    # 用户接口JWT签名密钥
+    secret-key: HACOJ
+    # 用户接口JWT有效期
+    ttl: 7200000
+    # 用户接口请求头中JWT的字段名
+    token-name: token
+
+  auth:
+    exclude:
+      exclude-paths:
+        - /user/login
+        - /search/**
+        - /user/register
+        - /test/**
+server:
+  port: 19500
+

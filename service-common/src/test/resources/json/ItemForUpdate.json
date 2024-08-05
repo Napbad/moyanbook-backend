@@ -1,0 +1,16 @@
+{
+  "id": 2,
+  "name": "name-nap",
+  "price": 180.00,
+  "description": "test-Napbad",
+  "status": 1,
+  "user": {
+    "id": 1
+  },
+  "labels": [
+    {
+      "id": 1
+    }
+  ],
+  "updatePersonId": 1
+}

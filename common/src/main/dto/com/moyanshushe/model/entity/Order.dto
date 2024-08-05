@@ -1,0 +1,47 @@
+export com.moyanshushe.model.entity.Order
+    -> package com.moyanshushe.model.dto.order
+
+import java.util.UUID
+
+input OrderForAdd {
+    orderId?
+    userId
+    items {
+        id
+    }
+    createTime?
+    updatePersonId
+}
+
+OrderForUpdate {
+    orderId
+    userId
+    items {
+        id
+    }
+    updatePersonId
+}
+
+OrderForDelete {
+    ids: MutableList<UUID?>
+    userId
+}
+
+OrderSubstance {
+    userId
+    orderId
+    status
+    items {
+        id
+    }
+    createTime
+}
+
+specification OrderSpecification {
+    orderId
+    userId
+    status
+    itemId: Int?
+    page: Int?
+    pageSize: Int?
+}

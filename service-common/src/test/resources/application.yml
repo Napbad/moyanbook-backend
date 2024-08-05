@@ -1,0 +1,127 @@
+# 配置Spring数据源
+spring:
+  profiles:
+    include: dev
+  datasource:
+    # MySQL驱动类名
+    driver-class-name: ${moyan.datasource.driver-class-name}
+    # 数据库连接URL
+    url: ${moyan.datasource.url}
+    # 数据库用户名
+    username: ${moyan.datasource.username}
+    # 数据库密码
+    password: ${moyan.datasource.password}
+    # 数据源类型，使用Druid连接池
+    type: ${moyan.datasource.type}
+
+  # Redis配置
+  data:
+    redis:
+      # Redis连接地址
+      host: ${moyan.data.redis.host}
+      # Redis端口
+      port: ${moyan.data.redis.port}
+      # 默认数据库索引
+      database: ${moyan.data.redis.database}
+      # Redis密码
+      password: ${moyan.data.redis.password}
+      # 连接超时时间
+      connect-timeout: ${moyan.data.redis.connect-timeout}
+      # 读取操作超时时间
+      timeout: ${moyan.data.redis.timeout}
+      lettuce:
+        # 连接池配置
+        pool:
+          # 最小空闲连接数
+          min-idle: ${moyan.data.redis.lettuce.pool.min-idle}
+          # 最大空闲连接数
+          max-idle: ${moyan.data.redis.lettuce.pool.max-idle}
+          # 最大活动连接数
+          max-active: ${moyan.data.redis.lettuce.pool.max-active}
+          # 从连接池获取连接的最大超时时间
+          max-wait: ${moyan.data.redis.lettuce.pool.max-wait}
+  # 邮件服务配置
+  mail:
+    protocol: ${moyan.mail.protocol}
+    host: ${moyan.mail.host}
+    port: ${moyan.mail.port}
+    username: ${moyan.mail.username}
+    password: ${moyan.mail.password}
+    test-connection: ${moyan.mail.test-connection}
+    properties:
+      mail:
+        smtp:
+          auth: ${moyan.mail.properties.mail.smtp.auth}
+        debug: ${moyan.mail.properties.mail.debug}
+        mime:
+          parameterization: ${moyan.mail.properties.mail.mime.parameterization}
+  application:
+    name: common-service
+
+  threads:
+    virtual:
+      enabled: true
+  cloud:
+    openfeign:
+      okhttp:
+        enabled: true
+
+# 服务器配置
+server:
+  port: ${server.port}
+
+nacos:
+  discovery:
+    server-addr: ${moyan.nacos.discovery.server-addr}
+
+
+# Jimmer ORM配置
+jimmer:
+  dialect: org.babyfish.jimmer.sql.dialect.MySqlDialect
+  client:
+    openapi:
+      path: /openapi.yml
+      ui-path: /openapi.html
+      properties:
+        info:
+          title: MoYanShushe
+          description: Moyanshushe 
+              __   __  __   __     __          _____ _               _           __
+              / /  |  \/  |  \ \   / /         / ____| |             | |          \ \
+            | |   | \  / | __\ \_/ /_ _ _ __ | (___ | |__  _   _ ___| |__   ___   | |
+            / /    | |\/| |/ _ \   / _` | '_ \ \___ \| '_ \| | | / __| '_ \ / _ \   \ \
+            \ \    | |  | | (_) | | (_| | | | |____) | | | | |_| \__ \ | | |  __/   / /
+            | |   |_|  |_|\___/|_|\__,_|_| |_|_____/|_| |_|\__,_|___/_| |_|\___|  | |
+            \_\                                                                 /_/
+  show-sql: true
+  pretty-sql: true
+
+moyanshushe:
+  key:
+    name: ${moyan.key.name}
+    key: ${moyan.key.key}
+    secret: ${moyan.key.secret}
+
+  jwt:
+    # 管理员接口JWT签名密钥
+    member-secret-key: ${moyan.jwt.member-secret-key}
+    # 管理员接口JWT有效期
+    member-ttl: ${moyan.jwt.member-ttl}
+    # 管理员接口请求头中JWT的字段名
+    member-token-name: ${moyan.jwt.member-token-name}
+    #
+
+    # 用户接口JWT签名密钥
+    user-secret-key: ${moyan.jwt.user-secret-key}
+    # 用户接口JWT有效期
+    user-ttl: ${moyan.jwt.user-ttl}
+    # 用户接口请求头中JWT的字段名
+    user-token-name: ${moyan.jwt.user-token-name}
+    member-check: true
+    user-check: true
+  alioss:
+    endpoint: ${moyan.oss.endpoint}
+    access-key-id: ${moyan.oss.access-key-id}
+    access-key-secret: ${moyan.oss.access-key-secret}
+    bucket-name: ${moyan.oss.bucket-name}
+

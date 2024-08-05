@@ -1,0 +1,123 @@
+export com.moyanshushe.model.entity.User
+    -> package com.moyanshushe.model.dto.user
+
+input unsafe UserForVerify {
+    id
+    phone
+    email
+}
+
+input UserForRegister {
+    id
+    name
+    email
+    password
+    captcha: String
+    address {
+        id
+    }
+    status
+    type
+}
+
+input UserForLogin {
+    id
+    name
+    phone
+    email
+    password
+}
+
+UserForUpdate {
+    id
+    name
+    gender
+    age
+    profileUrl
+    address {
+        id
+    }
+}
+
+UserForUpdatePassword {
+    id
+    password
+    email
+    newPassword: String
+    captcha: String
+}
+
+UserForBinding {
+    id
+    phone
+    email
+    captcha: String
+}
+
+UserWithoutPassword {
+    id
+    name
+    gender
+    age
+    status
+    profileUrl
+    address {
+        id
+    }
+}
+
+UserForUpdateType {
+    id
+    type
+    phone
+    email
+    captcha: String
+}
+
+PublicUserView {
+    id
+    name
+    gender
+    status
+    profileUrl
+    type
+}
+
+specification UserSpecification {
+    valueIn(id) as ids
+    like(name)
+    status
+    type
+    address {
+        id
+    }
+    email
+    phone
+    createPersonId
+    updatePersonId
+    ge(lastLoginTime)
+    le(lastLoginTime)
+    ge(createTime)
+    le(createTime)
+    ge(updateTime)
+    le(updateTime)
+
+
+    page: Int?
+    pageSize: Int?
+
+}
+
+specification PublicUserSpecification {
+    id
+    like(name)
+    status
+    type
+    email
+    phone
+
+
+    page: Int?
+    pageSize: Int?
+
+}

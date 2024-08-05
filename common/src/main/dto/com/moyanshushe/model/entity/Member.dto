@@ -1,0 +1,121 @@
+export com.moyanshushe.model.entity.Member
+    -> package com.moyanshushe.model.dto.member
+
+input unsafe MemberForRegister {
+    id
+    name
+    gender
+    profileUrl?
+    email
+    phone
+    password
+    address{
+        id
+    }
+//    responsibilityArea {
+//        id
+//    }
+    captcha: String
+
+    createPersonId
+}
+
+input MemberForVerify {
+    id
+    phone
+    email
+}
+
+input MemberForLogin {
+    id
+    name
+    phone
+    email
+    password
+}
+
+MemberForUpdate {
+     id
+     name
+     gender
+     profileUrl
+     address {
+         id
+     }
+
+     updatePersonId
+ }
+
+ MemberForUpdatePassword {
+     id
+     password
+     email
+     phone?
+     newPassword: String
+     captcha: String
+
+     updatePersonId
+ }
+
+MemberForBinding {
+    id
+    phone
+    email
+    captcha: String
+
+    updatePersonId
+}
+
+MemberForUpdateResponsibilityArea {
+    id
+    responsibilityArea {
+        id
+    }
+    captcha: String
+
+    updatePersonId
+}
+
+PublicMemberView {
+    id
+    name
+    gender
+    status
+    profileUrl
+
+}
+
+specification MemberSpecification {
+    valueIn(id) as ids
+    like(name)
+    status
+    address {
+        id
+    }
+    email
+    phone
+    createPersonId
+    updatePersonId
+    ge(createTime)
+    le(createTime)
+    ge(updateTime)
+    le(updateTime)
+
+
+    page: Int?
+    pageSize: Int?
+
+}
+
+specification PublicMemberSpecification {
+    id
+    like(name)
+    status
+    email
+    phone
+
+
+    page: Int?
+    pageSize: Int?
+
+}

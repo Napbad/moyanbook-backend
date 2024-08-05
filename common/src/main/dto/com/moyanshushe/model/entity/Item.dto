@@ -1,0 +1,140 @@
+export com.moyanshushe.model.entity.Item
+    -> package com.moyanshushe.model.dto.item
+
+import com.moyanshushe.model.OrderRule
+
+input ItemForAdd {
+    id
+    name
+    price
+    description
+    status
+
+    images {
+        imageUrl
+    }
+
+    userId
+
+    labels {
+        id
+    }
+}
+
+ItemForDelete {
+    ids: MutableList<Int?>
+    operatorId: Int?
+}
+
+ItemForConfirm {
+    memberConfirm {
+        member{
+            id
+        }
+        confirmCode
+    }
+    ids: MutableList<Int?>
+}
+
+ItemForUpdate {
+    id
+    name
+    price
+    description
+    status
+
+    user {
+        id
+    }
+
+    labels {
+        id
+    }
+
+    images {
+        imageUrl
+    }
+
+    updatePersonId
+}
+
+ItemSubstance {
+    id
+    name
+    price
+    description
+    status
+
+    images {
+        imageUrl
+    }
+
+    user {
+        id
+        name
+        address {
+            id
+            address
+        }
+    }
+
+    labels {
+        name
+    }
+
+    createTime
+    updatePersonId
+    updateTime
+}
+
+ItemUpdateStatus {
+    id
+    status
+
+    updatePersonId
+}
+
+ItemPublicView {
+    id
+    name
+    price
+    description
+    status
+
+    images {
+        imageUrl
+    }
+
+    user {
+        id
+        name
+    }
+
+    labels {
+        name
+    }
+}
+
+specification ItemSpecification {
+    id
+    like(name)
+    le(price) as maxPrice
+    ge(price) as minPrice
+    status
+
+    flat(user) {
+        valueIn(id) as userIds
+    }
+
+    flat(labels) {
+        valueIn(id) as labelIds
+    }
+
+    page: Int?
+    pageSize: Int?
+
+    orderByPrice: OrderRule?
+    orderByCreateTime: OrderRule?
+    orderByUpdateTime: OrderRule?
+}
+

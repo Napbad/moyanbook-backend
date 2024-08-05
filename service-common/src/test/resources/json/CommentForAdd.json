@@ -1,0 +1,38 @@
+[
+  {
+    "content": "这款产品真的超乎我的期待，质量非常好。",
+    "commenterId": 1,
+    "itemId": 4,
+    "parentId": null,
+    "commentTime": "2023-04-01 12:00:00",
+    "likes": 15,
+    "dislikes": 2
+  },
+  {
+    "content": "我同意楼上，这是我买过的最好的产品之一。",
+    "commenterId": 2,
+    "itemId": 4,
+    "parentId": 1,
+    "commentTime": "2023-04-01 12:30:00",
+    "likes": 10,
+    "dislikes": 1
+  },
+  {
+    "content": "包装也很精美，送礼的话是个不错的选择。",
+    "commenterId": 2,
+    "itemId": 1,
+    "parentId": null,
+    "commentTime": "2023-04-01 13:00:00",
+    "likes": 8,
+    "dislikes": 0
+  },
+  {
+    "content": "我遇到了一些问题，希望客服能尽快解决。",
+    "commenterId": 1,
+    "itemId": 3,
+    "parentId": null,
+    "commentTime": "2023-04-01 14:00:00",
+    "likes": 3,
+    "dislikes": 0
+  }
+]

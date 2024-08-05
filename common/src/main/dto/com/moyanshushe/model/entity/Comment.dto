@@ -1,0 +1,65 @@
+export com.moyanshushe.model.entity.Comment
+    -> package com.moyanshushe.model.dto.comment
+
+import com.moyanshushe.model.OrderRule
+
+input CommentForAdd {
+    content
+    commenterId
+    itemId
+    parentId
+    commentTime
+    likes
+    dislikes
+}
+
+CommentForUpdate {
+    id
+    content
+    commenterId
+    itemId
+    parentId
+    commentTime
+    likes
+    dislikes
+}
+
+CommentForDelete {
+    commenterId
+    ids: MutableList<Int?>
+}
+
+specification CommentSpecification {
+    id
+    like(content)
+    commenterId
+    itemId
+    parentId
+    ge(commentTime)
+    le(commentTime)
+    ge(likes)
+    dislikes
+
+    page: Int?
+    pageSize: Int?
+
+    orderById: OrderRule?
+    orderByCommentTime: OrderRule?
+    orderByLikes: OrderRule?
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

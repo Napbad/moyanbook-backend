@@ -1,0 +1,26 @@
+export com.moyanshushe.model.entity.MemberConfirm
+    -> package com.moyanshushe.model.dto.member_confirm
+
+MemberConfirmSubstance {
+    id
+    confirmCode
+    items {
+        id
+    }
+    status
+    member {
+        id
+    }
+}
+
+input MemberConfirmSubstanceInput {
+    id
+    confirmCode
+    items {
+        id
+    }
+    status
+    member {
+        id
+    }
+}

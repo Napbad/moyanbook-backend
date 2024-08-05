@@ -1,0 +1,27 @@
+export com.moyanshushe.model.entity.CommentReport
+    -> package com.moyanshushe.model.dto.comment_report
+
+CommentReportForAdd {
+    commentId
+    reporterId
+    reportTime
+    reason
+}
+
+CommentReportForDelete {
+    ids: MutableList<Int?>
+}
+
+specification CommentReportSpecification {
+    id
+    commentId
+    reporterId
+
+    ge(reportTime)
+    le(reportTime)
+
+    like(reason)
+
+    page: Int?
+    pageSize: Int?
+}

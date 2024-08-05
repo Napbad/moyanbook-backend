@@ -1,0 +1,25 @@
+export com.moyanshushe.model.entity.Label
+    -> package com.moyanshushe.model.dto.label
+
+input LabelInput {
+    id
+    name
+}
+
+specification LabelSpecification {
+    ids: MutableList<Int?>?
+
+    page: Int?
+    pageSize: Int?
+
+    like(name)
+}
+
+LabelForDelete {
+    ids: MutableList<Int?>
+}
+
+LabelSubstance {
+    id
+    name
+}

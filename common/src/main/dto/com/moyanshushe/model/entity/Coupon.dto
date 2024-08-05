@@ -1,0 +1,32 @@
+export com.moyanshushe.model.entity.Coupon
+    -> package com.moyanshushe.model.dto.coupon
+
+input unsafe CouponSubstance {
+    id
+    name
+    price
+    status
+    createTime?
+    expirationTime?
+    userId
+}
+
+CouponForDelete {
+    ids: MutableList<Int?>
+}
+
+specification CouponSpecification {
+    id
+    like(name)
+    ge(price)
+    le(price)
+    ge(createTime)
+    le(createTime)
+    ge(expirationTime)
+    le(expirationTime)
+    status
+    userId
+
+    page: Int?
+    pageSize: Int?
+}

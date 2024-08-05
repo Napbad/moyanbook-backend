@@ -1,0 +1,39 @@
+export com.moyanshushe.model.entity.CommentHistory
+    -> package com.moyanshushe.model.dto.comment_history
+
+CommentHistoryForAdd {
+    content
+    commentId
+    modifiedBy
+}
+
+CommentHistoryForDelete {
+    ids: MutableList<Int?>
+}
+
+specification CommentHistorySpecification {
+    id
+    like(content)
+    modifiedBy
+    ge(modifiedTime)
+    le(modifiedTime)
+
+    page: Int?
+    pageSize: Int?
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
