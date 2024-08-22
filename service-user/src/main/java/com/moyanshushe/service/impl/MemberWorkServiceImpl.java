@@ -90,8 +90,6 @@ public class MemberWorkServiceImpl implements MemberWorkService {
                 List<Item> itemList = jsqlClient.createQuery(itemTable)
                         .where(
                                 itemTable.user().addressId().eq(address.id())
-                        ).where(
-                                itemTable.status().eq(Item.Status.IN_USER)
                         ).select(
                                 itemTable.fetch(
                                         Fetchers.ITEM_FETCHER
@@ -196,15 +194,15 @@ public class MemberWorkServiceImpl implements MemberWorkService {
         Collection<Item> items = list.getFirst().items();
 
         List<ItemUpdateStatus> itemsForUpdateStatus = items.stream().map(item -> {
-            if (item.status() != Item.Status.IN_USER) {
-                throw new ItemStatusException(
-                        ItemConstant.ITEM_STATUS_EXCEPTION +
-                                ": " +
-                                item.id() +
-                                "(status: " +
-                                item.status() +
-                                ")");
-            }
+//            if (item.status() != Item.Status.IN_USER) {
+//                throw new ItemStatusException(
+//                        ItemConstant.ITEM_STATUS_EXCEPTION +
+//                                ": " +
+//                                item.id() +
+//                                "(status: " +
+//                                item.status() +
+//                                ")");
+//            }
 
             return new ItemUpdateStatus();
         }).toList();

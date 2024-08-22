@@ -7,11 +7,15 @@ package com.moyanshushe.service;
 
 */
 
+import com.moyanshushe.model.dto.comment.CommentSpecification;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForAdd;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForDelete;
+import com.moyanshushe.model.dto.comment_likes.CommentLikeSpecification;
 
 public interface CommentLikeService {
     void add(CommentLikeForAdd commentLike);
 
     void delete(CommentLikeForDelete commentLike);
+
+    Object query(CommentLikeSpecification specification);
 }

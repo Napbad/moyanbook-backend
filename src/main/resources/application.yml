@@ -3,7 +3,6 @@ spring:
   profiles:
     include: dev
 
-
   datasource:
     # MySQL驱动类名
     driver-class-name: ${moyan.datasource.driver-class-name}

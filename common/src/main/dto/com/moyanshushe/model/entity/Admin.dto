@@ -3,13 +3,11 @@ export com.moyanshushe.model.entity.Admin
 
 
 input unsafe AdminForVerify {
-    id
     phone
     email
 }
 
 input AdminForRegister {
-    id
     name
     email
     password
@@ -22,7 +20,6 @@ input AdminForRegister {
 }
 
 input AdminForLogin {
-    id
     name
     phone
     email

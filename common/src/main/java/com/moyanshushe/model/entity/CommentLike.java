@@ -25,11 +25,9 @@ public interface CommentLike {
     @IdView
     int commentId();
 
-    @NotNull
     @ManyToOne
     Comment comment();
 
-    @NotNull
     LocalDateTime likeDate();
 }
 

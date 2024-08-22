@@ -5,6 +5,7 @@ package com.moyanshushe.mapper;
  * Version: 1.0
  */
 
+import com.moyanshushe.model.OrderRule;
 import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.model.entity.Item;
 import com.moyanshushe.model.entity.ItemFetcher;
@@ -29,9 +30,7 @@ public class ItemMapper {
     }
 
     public SimpleSaveResult<Item> add(ItemForAdd itemForAdd) {
-        return jsqlClient.getEntities()
-                .saveCommand(itemForAdd)
-                .execute();
+        return jsqlClient.insert(itemForAdd);
     }
 
     public Integer delete(ItemForDelete itemForDelete) {
@@ -43,12 +42,29 @@ public class ItemMapper {
     }
 
     public SimpleSaveResult<Item> update(ItemForUpdate itemForUpdate) {
-        return jsqlClient.save(itemForUpdate.toEntity());
+        return jsqlClient.update(itemForUpdate.toEntity());
     }
 
     public @NotNull Page<Item> fetch(ItemSpecification specification, ItemFetcher fetcher) {
         return jsqlClient.createQuery(table)
                 .where(specification)
+                .orderByIf(
+                        specification.getOrderByCreateTime() != null,
+                        specification.getOrderByCreateTime() == OrderRule.ASC ?
+                                table.createTime().asc() :
+                                table.createTime().desc()
+                )
+                .orderByIf(
+                        specification.getOrderByUpdateTime() != null,
+                        specification.getOrderByUpdateTime() == OrderRule.ASC ?
+                                table.updateTime().asc() :
+                                table.updateTime().desc()
+                ).orderByIf(
+                        specification.getOrderByPrice() != null,
+                        specification.getOrderByPrice() == OrderRule.ASC ?
+                                table.price().asc() :
+                                table.price().desc()
+                )
                 .select(
                         table.fetch(
                                 fetcher

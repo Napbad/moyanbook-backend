@@ -1,8 +1,31 @@
 export com.moyanshushe.model.entity.Address
     -> package com.moyanshushe.model.dto.address
 
-input AddressSubstance {
+input AddressCreateInput {
+    address
+    addressPart1 {
+        id
+    }
+    addressPart2 {
+        id
+    }
+}
+
+AddressView {
     id
+    address
+    addressPart1 {
+        id
+        name
+    }
+    addressPart2 {
+        id
+        name
+    }
+}
+
+input AddressUpdateInput {
+    id!
     address
 
     addressPart1 {
@@ -11,9 +34,6 @@ input AddressSubstance {
     addressPart2 {
         id
     }
-
-    createPersonId
-    updatePersonId
 }
 
 specification AddressSpecification {
@@ -22,8 +42,12 @@ specification AddressSpecification {
     page: Int?
     pageSize: Int?
 
-    createPersonId
-    updatePersonId
+    createPerson {
+        id
+    }
+    updatePerson {
+        id
+    }
 }
 
 AddressForDelete {

@@ -1,8 +1,7 @@
 export com.moyanshushe.model.entity.Member
     -> package com.moyanshushe.model.dto.member
 
-input unsafe MemberForRegister {
-    id
+input MemberForRegister {
     name
     gender
     profileUrl?
@@ -12,12 +11,12 @@ input unsafe MemberForRegister {
     address{
         id
     }
-//    responsibilityArea {
-//        id
-//    }
+
     captcha: String
 
-    createPersonId
+    createPerson {
+        id
+    }
 }
 
 input MemberForVerify {
@@ -43,7 +42,9 @@ MemberForUpdate {
          id
      }
 
-     updatePersonId
+     updatePerson{
+        id
+     }
  }
 
  MemberForUpdatePassword {
@@ -54,7 +55,9 @@ MemberForUpdate {
      newPassword: String
      captcha: String
 
-     updatePersonId
+     updatePerson{
+        id
+     }
  }
 
 MemberForBinding {
@@ -63,7 +66,9 @@ MemberForBinding {
     email
     captcha: String
 
-    updatePersonId
+    updatePerson{
+        id
+    }
 }
 
 MemberForUpdateResponsibilityArea {
@@ -73,7 +78,9 @@ MemberForUpdateResponsibilityArea {
     }
     captcha: String
 
-    updatePersonId
+    updatePerson{
+        id
+    }
 }
 
 PublicMemberView {
@@ -94,17 +101,19 @@ specification MemberSpecification {
     }
     email
     phone
-    createPersonId
-    updatePersonId
+    createPerson{
+        id
+    }
+    updatePerson{
+        id
+    }
     ge(createTime)
     le(createTime)
     ge(updateTime)
     le(updateTime)
 
-
     page: Int?
     pageSize: Int?
-
 }
 
 specification PublicMemberSpecification {
@@ -114,8 +123,6 @@ specification PublicMemberSpecification {
     email
     phone
 
-
     page: Int?
     pageSize: Int?
-
 }

@@ -5,20 +5,16 @@ import com.moyanshushe.model.dto.item.ItemForAdd;
 import com.moyanshushe.model.dto.item.ItemForDelete;
 import com.moyanshushe.model.dto.item.ItemForUpdate;
 import com.moyanshushe.model.dto.item.ItemSpecification;
-import com.moyanshushe.model.entity.Item;
 import com.moyanshushe.service.ItemService;
 import com.moyanshushe.utils.AliOssUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.client.meta.Api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * ItemController类负责处理所有与书籍管理相关的REST API操作。
@@ -45,9 +41,9 @@ public class ItemController {
      * @return 符合规格的书籍实体列表（分页）
      */
     @Api
-    @PostMapping("/fetch")
-    public Page<Item> fetch(@RequestBody ItemSpecification specification) {
-        return itemService.query(specification);
+    @PostMapping("/query")
+    public ResponseEntity<Result> query(@RequestBody ItemSpecification specification) {
+        return ResponseEntity.ok(Result.success(itemService.query(specification)));
     }
 
     /**
@@ -111,8 +107,9 @@ public class ItemController {
      * @return 符合规格的书籍实体列表（分页）
      */
     @Api
-    @PostMapping("/fetch-public")
-    public Page<Item> fetchPublic(@RequestBody ItemSpecification specification) {
-        return itemService.query(specification);
+    @PostMapping("/query-public")
+    public ResponseEntity<Result> fetchPublic(@RequestBody ItemSpecification specification) {
+
+        return ResponseEntity.ok(Result.success(itemService.queryPublic(specification)));
     }
 }

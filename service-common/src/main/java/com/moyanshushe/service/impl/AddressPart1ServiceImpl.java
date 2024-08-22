@@ -1,8 +1,9 @@
 package com.moyanshushe.service.impl;
 
+import com.moyanshushe.model.dto.address_part1.AddressPart1CreateInput;
 import com.moyanshushe.model.dto.address_part1.AddressPart1ForDelete;
-import com.moyanshushe.model.dto.address_part1.AddressPart1Input;
 import com.moyanshushe.model.dto.address_part1.AddressPart1Specification;
+import com.moyanshushe.model.dto.address_part1.AddressPart1UpdateInput;
 import com.moyanshushe.model.entity.AddressPart1;
 import com.moyanshushe.model.entity.AddressPart1Table;
 import com.moyanshushe.service.AddressPart1Service;
@@ -28,14 +29,14 @@ public class AddressPart1ServiceImpl implements AddressPart1Service {
     }
 
     @Override
-    public int add(AddressPart1Input addressPart1Input) {
-        SimpleSaveResult<AddressPart1> result = jsqlClient.save(addressPart1Input);
+    public Integer add(AddressPart1CreateInput addressPart1Input) {
+        SimpleSaveResult<AddressPart1> result = jsqlClient.insert(addressPart1Input);
 
         return result.getModifiedEntity().id();
     }
 
     @Override
-    public void update(AddressPart1Input addressPart1Input) {
+    public void update(AddressPart1UpdateInput addressPart1Input) {
         jsqlClient.update(addressPart1Input);
     }
 

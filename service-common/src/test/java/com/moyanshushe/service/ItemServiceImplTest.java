@@ -5,6 +5,7 @@ package com.moyanshushe.service;
  * Version: 1.0
  */
 
+import com.moyanshushe.model.dto.address.AddressSubstance;
 import com.moyanshushe.model.dto.item.ItemForAdd;
 import com.moyanshushe.model.dto.item.ItemForDelete;
 import com.moyanshushe.model.dto.item.ItemForUpdate;
@@ -36,14 +37,14 @@ class ItemServiceImplTest {
     @Order(1)
     void testAdd() {
         ItemForAdd itemForAdd = new ItemForAdd();
-        ItemForAdd.TargetOf_labels targetOfLabels = new ItemForAdd.TargetOf_labels();
+        ItemForAdd.TargetOf_labels targetOfCategories = new ItemForAdd.TargetOf_labels();
         ItemForAdd.TargetOf_images targetOfImages = new ItemForAdd.TargetOf_images();
-        targetOfLabels.setId(1);
+        targetOfCategories.setId(1);
         targetOfImages.setImageUrl("http://test.moyanshushe.napbad.com");
 
 
         itemForAdd.setName("test item1");
-        itemForAdd.setLabels(List.of(targetOfLabels));
+        itemForAdd.setCategories(List.of(targetOfCategories));
         itemForAdd.setUserId(1);
         itemForAdd.setPrice(100.00);
         itemForAdd.setDescription("description");
@@ -80,7 +81,11 @@ class ItemServiceImplTest {
     void testUpdate() {
         ItemForUpdate itemForUpdate = JsonToObjectUtil.jsonFileToObject("ItemForUpdate", ItemForUpdate.class);
 
-        itemForUpdate.setUpdatePersonId(1);
+        ItemForUpdate.TargetOf_updatePerson targetOfUpdatePerson = new ItemForUpdate.TargetOf_updatePerson();
+        targetOfUpdatePerson.setId(1);
+
+        itemForUpdate.setUpdatePerson(targetOfUpdatePerson);
+
         Boolean update = itemService.update(itemForUpdate);
         assertTrue(update);
     }

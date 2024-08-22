@@ -8,9 +8,10 @@ package com.moyanshushe.controller;
 import com.moyanshushe.constant.AddressConstant;
 import com.moyanshushe.constant.WebIOConstant;
 import com.moyanshushe.model.Result;
+import com.moyanshushe.model.dto.address_part2.AddressPart2CreateInput;
 import com.moyanshushe.model.dto.address_part2.AddressPart2ForDelete;
-import com.moyanshushe.model.dto.address_part2.AddressPart2Input;
 import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
+import com.moyanshushe.model.dto.address_part2.AddressPart2UpdateInput;
 import com.moyanshushe.model.entity.AddressPart2;
 import com.moyanshushe.service.AddressPart2Service;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +40,9 @@ public class AddressPart2Controller {
 
     // 创建地址部分1
     @PostMapping("/add")
-    public ResponseEntity<Result> createAddressPart2(@RequestBody AddressPart2Input addressPart2Input) {
+    public ResponseEntity<Result> createAddressPart2(@RequestBody AddressPart2CreateInput addressPart2) {
         try {
-            int createdId = addressPart2Service.add(addressPart2Input);
+            int createdId = addressPart2Service.add(addressPart2);
             return ResponseEntity.ok(Result.success(createdId));
         } catch (Exception e) {
             log.error("Error creating address part 1", e);
@@ -50,8 +51,8 @@ public class AddressPart2Controller {
     }
 
     // 读取地址部分1
-    @PostMapping("/get")
-    public ResponseEntity<Result> readAddressPart2(@RequestBody AddressPart2Specification specification) {
+    @PostMapping("/query")
+    public ResponseEntity<Result> queryAddressPart2(@RequestBody AddressPart2Specification specification) {
         Page<AddressPart2> page = addressPart2Service.query(specification);
 
         return ResponseEntity.ok(Result.success(page));
@@ -59,7 +60,7 @@ public class AddressPart2Controller {
 
     // 更新地址部分1
     @PostMapping("/update")
-    public ResponseEntity<Result> updateAddressPart2(@RequestBody AddressPart2Input addressPart2Input) {
+    public ResponseEntity<Result> updateAddressPart2(@RequestBody AddressPart2UpdateInput addressPart2Input) {
         addressPart2Service.update(addressPart2Input);
 
         if (addressPart2Input.getId() == null || addressPart2Input.getParentAddress() == null) {

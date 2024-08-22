@@ -7,14 +7,13 @@ package com.moyanshushe.service.impl;
  * Version: 1.0
  */
 
+import com.moyanshushe.exception.AddressExistsException;
+import com.moyanshushe.exception.common.InputInvalidException;
 import com.moyanshushe.mapper.AddressMapper;
-import com.moyanshushe.model.dto.address.AddressForDelete;
-import com.moyanshushe.model.dto.address.AddressSpecification;
-import com.moyanshushe.model.dto.address.AddressSubstance;
+import com.moyanshushe.model.dto.address.*;
 import com.moyanshushe.model.entity.Address;
 import com.moyanshushe.service.AddressService;
 import org.babyfish.jimmer.Page;
-import org.babyfish.jimmer.sql.ast.mutation.DeleteResult;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -40,19 +39,19 @@ public class AddressServiceImpl implements AddressService {
      * @return 添加操作是否成功的标志，成功返回true，失败返回false。
      */
     @Override
-    public @NotNull Boolean add(AddressSubstance addressSubstance) {
+    public @NotNull Address add(AddressCreateInput addressSubstance) {
 
         if (addressSubstance == null) {
-            return false;
+            throw new InputInvalidException();
         }
 
-        if (mapper.queryOneByAddress(addressSubstance.getAddress()).isPresent()) {
-            return false;
+        if (mapper.queryOneByAddress(addressSubstance).isPresent()) {
+            throw new AddressExistsException();
         }
 
-        mapper.add(addressSubstance.toEntity());
+        SimpleSaveResult<Address> add = mapper.add(addressSubstance.toEntity());
 
-        return true;
+        return add.getModifiedEntity();
     }
 
     /**
@@ -62,7 +61,7 @@ public class AddressServiceImpl implements AddressService {
      * @return 更新操作是否成功的标志，成功返回true，失败返回false。
      */
     @Override
-    public Boolean update(AddressSubstance addressSubstance) {
+    public Boolean update(AddressUpdateInput addressSubstance) {
 
         SimpleSaveResult<Address> update = mapper.update(addressSubstance.toEntity());
 
@@ -77,8 +76,8 @@ public class AddressServiceImpl implements AddressService {
      * @return 符合条件的地址实体集合。
      */
     @Override
-    public Page<Address> query(AddressSpecification addressSpecification) {
-        return mapper.get(addressSpecification);
+    public Page<AddressView> query(AddressSpecification addressSpecification) {
+        return mapper.query(addressSpecification);
     }
 
     /**

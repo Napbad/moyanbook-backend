@@ -45,8 +45,8 @@ public class OrderController {
     }
 
     @Api
-    @PostMapping("/fetch")
-    public ResponseEntity<Result> getOrder(
+    @PostMapping("/query")
+    public ResponseEntity<Result> queryOrder(
             @RequestBody OrderSpecification specification) {
         Page<Order> result = service.query(specification);
 

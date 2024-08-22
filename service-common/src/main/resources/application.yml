@@ -2,6 +2,7 @@
 spring:
   profiles:
     include: dev
+
   datasource:
     # MySQL驱动类名
     driver-class-name: ${moyan.datasource.driver-class-name}
@@ -13,6 +14,7 @@ spring:
     password: ${moyan.datasource.password}
     # 数据源类型，使用Druid连接池
     type: ${moyan.datasource.type}
+
 
   # Redis配置
   data:
@@ -60,7 +62,7 @@ spring:
 
   threads:
     virtual:
-      enabled: true
+      enabled: false
   cloud:
     openfeign:
       okhttp:
@@ -82,20 +84,15 @@ server:
 jimmer:
   dialect: org.babyfish.jimmer.sql.dialect.MySqlDialect
   client:
+    ts:
+      path: /ts.zip
     openapi:
       path: /openapi.yml
       ui-path: /openapi.html
       properties:
         info:
-          title: MoYanShushe
-          description: Moyanshushe 
-              __   __  __   __     __          _____ _               _           __
-              / /  |  \/  |  \ \   / /         / ____| |             | |          \ \
-            | |   | \  / | __\ \_/ /_ _ _ __ | (___ | |__  _   _ ___| |__   ___   | |
-            / /    | |\/| |/ _ \   / _` | '_ \ \___ \| '_ \| | | / __| '_ \ / _ \   \ \
-            \ \    | |  | | (_) | | (_| | | | |____) | | | | |_| \__ \ | | |  __/   / /
-            | |   |_|  |_|\___/|_|\__,_|_| |_|_____/|_| |_|\__,_|___/_| |_|\___|  | |
-            \_\                                                                 /_/
+          title: pengyou api page
+          description: Project api file page
   show-sql: true
   pretty-sql: true
 

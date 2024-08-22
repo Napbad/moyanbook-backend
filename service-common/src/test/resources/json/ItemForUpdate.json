@@ -7,10 +7,12 @@
   "user": {
     "id": 1
   },
-  "labels": [
+  "categories": [
     {
       "id": 1
     }
   ],
-  "updatePersonId": 1
+  "updatePerson": {
+    "id": 1
+  }
 }

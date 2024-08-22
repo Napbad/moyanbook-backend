@@ -8,13 +8,14 @@ import org.babyfish.jimmer.sql.*;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * 用户实体，对应数据库表"user"
  */
 @Entity
-public interface User {
+public interface User extends BaseEntity {
 
     /**
      * 获取用户id，主键
@@ -109,18 +110,6 @@ public interface User {
     int type();
 
     /**
-     * 获取用户创建时间
-     * @return 用户创建时间
-     */
-    LocalDate createTime();
-
-    /**
-     * 获取用户更新时间
-     * @return 用户更新时间
-     */
-    LocalDate updateTime();
-
-    /**
      * 获取用户头像网址
      * @return 头像网址，可能为null
      */
@@ -144,12 +133,6 @@ public interface User {
 
     @OneToMany(mappedBy = "user")
     List<CommentLike> commentLike();
-
-    @JsonIgnore
-    int updatePersonId();
-
-    @JsonIgnore
-    int createPersonId();
 
     @Default("0")
     @LogicalDeleted(

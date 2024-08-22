@@ -1,9 +1,6 @@
 package com.moyanshushe.service;
 
-import com.moyanshushe.model.dto.member.MemberForLogin;
-import com.moyanshushe.model.dto.member.MemberForRegister;
-import com.moyanshushe.model.dto.member.MemberForUpdate;
-import com.moyanshushe.model.dto.member.MemberForVerify;
+import com.moyanshushe.model.dto.member.*;
 import com.moyanshushe.model.entity.Member;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,4 +20,8 @@ public interface MemberAccountService {
     Boolean memberUpdate(MemberForUpdate memberForUpdate);
 
     void memberVerify(MemberForVerify memberForVerify);
+
+    boolean updatePassword(MemberForUpdatePassword memberForUpdatePassword);
+
+    boolean bind(MemberForBinding memberForBinding);
 }

@@ -31,10 +31,10 @@ public interface Comment {
     User commenter();
 
     @IdView
-    int itemId();
+    int labelId();
 
     @ManyToOne
-    Item item();
+    Label label();
 
     @IdView
     @Nullable

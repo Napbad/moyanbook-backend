@@ -1,6 +1,7 @@
 package com.moyanshushe.mapper;
 
 import com.moyanshushe.model.dto.order.*;
+import com.moyanshushe.model.entity.Fetchers;
 import com.moyanshushe.model.entity.Order;
 import com.moyanshushe.model.entity.OrderTable;
 import org.babyfish.jimmer.Page;
@@ -27,7 +28,7 @@ public class OrderMapper {
     }
 
     public SimpleSaveResult<Order> add(OrderForAdd order) {
-        return jsqlClient.save(order.toEntity());
+        return jsqlClient.save(order);
     }
 
     public Page<Order> query(OrderSpecification specification) {
@@ -37,7 +38,31 @@ public class OrderMapper {
                         table.createTime().asc()
                 )
                 .select(
-                        table
+                        table.fetch(
+                                Fetchers.ORDER_FETCHER
+                                        .items(
+                                                Fetchers.ITEM_FETCHER
+                                                        .images(
+                                                                Fetchers.ITEM_IMAGE_FETCHER
+                                                                        .imageUrl()
+                                                        )
+                                                        .category(
+                                                                Fetchers.CATEGORY_FETCHER
+                                                                        .name()
+                                                        )
+                                                        .name()
+                                                        .description()
+                                                        .user(
+                                                                Fetchers.USER_FETCHER
+                                                                        .name()
+                                                                        .profileUrl()
+                                                        )
+                                                        .price()
+                                                        .status()
+
+                                        )
+                                        .status()
+                        )
                 )
                 .fetchPage(
                         specification.getPage() == null ? 0 : specification.getPage(),

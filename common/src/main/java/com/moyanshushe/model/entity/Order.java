@@ -1,5 +1,6 @@
 package com.moyanshushe.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.babyfish.jimmer.jackson.JsonConverter;
 import org.babyfish.jimmer.sql.*;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "order_detail")
-public interface Order {
+public interface Order extends BaseEntityWithOnlyUpdate {
 
     /**
      * 订单id
@@ -54,14 +55,6 @@ public interface Order {
     List<Item> items();
 
     /**
-     * 创建时间
-     */
-    LocalDateTime createTime();
-
-    @JsonIgnore
-    int updatePersonId();
-
-    /**
      * 逻辑删除字段
      */
     @Default("0")
@@ -72,6 +65,8 @@ public interface Order {
             name = "is_deleted"
     )
     int deleted();
+
+    LocalDateTime createTime();
 
     class Status {
         public static final short NORMAL = 10;

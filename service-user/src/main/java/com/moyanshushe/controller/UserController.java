@@ -8,13 +8,15 @@ import com.moyanshushe.constant.WebIOConstant;
 import com.moyanshushe.exception.NoAuthorityException;
 import com.moyanshushe.exception.common.InputInvalidException;
 import com.moyanshushe.model.Result;
+import com.moyanshushe.model.UserLoginResult;
+import com.moyanshushe.model.dto.address.AddressCreateInput;
 import com.moyanshushe.model.dto.address.AddressSpecification;
 import com.moyanshushe.model.dto.address_part1.AddressPart1Specification;
 import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
 import com.moyanshushe.model.dto.coupon.CouponSpecification;
-import com.moyanshushe.model.dto.coupon.CouponSubstance;
+import com.moyanshushe.model.dto.coupon.CouponView;
 import com.moyanshushe.model.dto.item.*;
-import com.moyanshushe.model.dto.label.LabelSpecification;
+import com.moyanshushe.model.dto.category.CategorySpecification;
 import com.moyanshushe.model.dto.order.OrderForAdd;
 import com.moyanshushe.model.dto.order.OrderForDelete;
 import com.moyanshushe.model.dto.order.OrderForUpdate;
@@ -35,12 +37,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-// 用户控制器类，负责处理用户相关的HTTP请求
+/**
+ * 用户控制器类，负责处理用户相关的HTTP请求
+ */
 @Api
+
 @RestController
 @RequestMapping({"/user"})
 public class UserController {
@@ -66,6 +74,18 @@ public class UserController {
      * 注册用户
      *
      * @param userForRegister 用户注册信息
+     *                        UserForRegister {
+     *                        id
+     *                        name!
+     *                        email!
+     *                        password!
+     *                        captcha: String!
+     *                        address {
+     *                        id
+     *                        }
+     *                        status  1 -> normal(default)  2 -> unsafe  3 ->  freeze
+     *                        type    1 -> normal(students)  2 -> store
+     *                        }
      * @return 注册成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
@@ -84,11 +104,25 @@ public class UserController {
      * 用户登录
      *
      * @param userForLogin 用户登录信息
-     * @return 登录成功返回200和包含JWT的成功消息，失败返回401和错误消息
+     *                     input UserForLogin {
+     *                     id  --- choose one
+     *                     name  ---
+     *                     phone  ---
+     *                     email  ---
+     *                     password !
+     *                     }
+     * @return 登录成功返回200，用户信息和包含JWT的成功消息，失败返回401和错误消息
      */
     @Api
     @PostMapping({"/login"})
     public ResponseEntity<Result> loginUser(@RequestBody UserForLogin userForLogin) {
+
+        if ((userForLogin.getEmail() == null
+                && userForLogin.getPhone() == null
+                && userForLogin.getName() == null
+                && userForLogin.getId() == null)) {
+            throw new InputInvalidException();
+        }
 
         log.info("user login: id: {}, name: {}, email: {}, phone: {}"
                 , userForLogin.getId(), userForLogin.getName(), userForLogin.getEmail(), userForLogin.getPhone());
@@ -99,7 +133,9 @@ public class UserController {
             map.put(JwtClaimsConstant.ID, user.id());
             String jwt = JwtUtil.createJWT(this.jwtProperties.getSecretKey(), this.jwtProperties.getTtl(), map);
 
-            return ResponseEntity.ok(Result.success(new Tuple2<>(user, jwt)));
+            return ResponseEntity.ok(Result.success(new UserLoginResult(
+                    user, jwt
+            )));
 
         } else {
             return ResponseEntity.status(401).body(Result.error(AccountConstant.ACCOUNT_LOGIN_FAILURE));
@@ -110,6 +146,16 @@ public class UserController {
      * 更新用户信息
      *
      * @param userForUpdate 用户更新信息
+     *                      UserForUpdate {
+     *                      id!
+     *                      name (all below are optional)
+     *                      gender
+     *                      age
+     *                      profileUrl
+     *                      address {
+     *                      id
+     *                      }
+     *                      }
      * @return 更新成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
@@ -125,6 +171,16 @@ public class UserController {
                 : ResponseEntity.badRequest().body(Result.error(AccountConstant.ACCOUNT_CHANGE_FAILURE));
     }
 
+    /**
+     * @param userForUpdatePassword UserForUpdatePassword {
+     *                              id!
+     *                              password!
+     *                              email!
+     *                              newPassword: String!
+     *                              captcha: String!
+     *                              }
+     * @return 更改成功返回200和成功消息，失败返回错误消息
+     */
     @Api
     @PostMapping({"/change-password"})
     public ResponseEntity<Result> changePassword(@RequestBody UserForUpdatePassword userForUpdatePassword) {
@@ -141,11 +197,17 @@ public class UserController {
      * 绑定用户信息
      *
      * @param userForBinding 用户绑定信息
+     *                       UserForBinding {
+     *                       id!
+     *                       phone -- choose one
+     *                       email --
+     *                       captcha: String!
+     *                       }
      * @return 绑定成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
     @PostMapping({"/bind"})
-    public ResponseEntity<Result> bind(UserForBinding userForBinding) {
+    public ResponseEntity<Result> bind(@RequestBody UserForBinding userForBinding) {
 
         log.info("user: {} binding", userForBinding.getId());
 
@@ -173,6 +235,12 @@ public class UserController {
      * 验证用户信息
      *
      * @param userForVerify 用户验证信息
+     *                      <p>
+     *                      UserForVerify {
+     *                      id
+     *                      phone --- choose one
+     *                      email ---
+     *                      }
      * @return 验证成功返回200和成功消息
      */
     @Api
@@ -192,6 +260,16 @@ public class UserController {
     @Api
     @PostMapping("/item/fetch")
     public ResponseEntity<Result> fetchItem(@RequestBody ItemSpecification specification) {
+
+        if (specification.getUserIds() == null
+                || specification.getUserIds().size() != 1
+                || !((ArrayList<?>) specification.getUserIds()).getFirst().equals(UserContext.getUserId())
+        ) {
+            throw new InputInvalidException();
+        }
+
+        specification.setUserIds(new ArrayList<>(Collections.singletonList(UserContext.getUserId())));
+
         return commonServiceClient.fetchItems(specification);
     }
 
@@ -204,6 +282,14 @@ public class UserController {
     @Api
     @PostMapping("/item/add")
     public ResponseEntity<Result> addItem(@RequestBody ItemForAdd itemForAdd) {
+
+        if (UserContext.getUserId() == null) {
+            throw new NoAuthorityException();
+        }
+        if (!UserContext.getUserId().equals(itemForAdd.getUserId())) {
+            throw new InputInvalidException();
+        }
+
         itemForAdd.setUserId(UserContext.getUserId());
 
         return commonServiceClient.addItem(itemForAdd);
@@ -245,13 +331,13 @@ public class UserController {
     /**
      * 根据指定条件获取标签信息。
      *
-     * @param label 查询标签的条件
+     * @param category 查询标签的条件
      * @return 返回标签查询结果
      */
     @Api
-    @PostMapping("/label/fetch")
-    public ResponseEntity<Result> fetchLabels(@RequestBody LabelSpecification label) {
-        return commonServiceClient.queryLabels(label);
+    @PostMapping("/category/query")
+    public ResponseEntity<Result> queryCategories(@RequestBody CategorySpecification category) {
+        return commonServiceClient.queryCategories(category);
     }
 
     /**
@@ -273,25 +359,25 @@ public class UserController {
      * @return 返回地址查询结果
      */
     @Api
-    @PostMapping("/address/get")
+    @PostMapping("/address/query")
     public ResponseEntity<Result> getAddress(@RequestBody AddressSpecification addressForQuery) {
-        return commonServiceClient.getAddress(addressForQuery);
+        return commonServiceClient.queryAddress(addressForQuery);
     }
 
     @Api
     @PostMapping("address/add")
-    public ResponseEntity<Result> addAddress(@RequestBody AddressSpecification addressForQuery) {
-        return commonServiceClient.getAddress(addressForQuery);
+    public ResponseEntity<Result> addAddress(@RequestBody AddressCreateInput addressForQuery) {
+        return commonServiceClient.addAddress(addressForQuery);
     }
 
     @Api
-    @PostMapping("address-part1")
+    @PostMapping("address-part1/query")
     public ResponseEntity<Result> getAddressPart1(@RequestBody AddressPart1Specification specification) {
-        return commonServiceClient.readAddressPart1(specification);
+        return commonServiceClient.queryAddressPart1(specification);
     }
 
     @Api
-    @PostMapping("address-part2")
+    @PostMapping("address-part2/query")
     public ResponseEntity<Result> getAddressPart2(@RequestBody AddressPart2Specification specification) {
         return commonServiceClient.readAddressPart2(specification);
     }
@@ -303,11 +389,11 @@ public class UserController {
      * @return 返回订单查询结果
      */
     @Api
-    @PostMapping("/order/fetch")
+    @PostMapping("/order/query")
     public ResponseEntity<Result> getOrder(@RequestBody OrderSpecification specification) {
         specification.setUserId(UserContext.getUserId());
 
-        return commonServiceClient.getOrder(specification);
+        return commonServiceClient.queryOrder(specification);
     }
 
     /**
@@ -319,10 +405,12 @@ public class UserController {
     @Api
     @PostMapping("/order/add")
     public ResponseEntity<Result> addOrder(@RequestBody OrderForAdd orderForAdd) {
-//         TODO  Auth
-//        if (!Objects.equals(orderForAdd.getUserId(), UserContext.getUserId())) {
-//            throw new NoAuthorityException();
-//        }
+        if (!Objects.equals(orderForAdd.getUserId(), UserContext.getUserId())) {
+
+            log.info("user: {} add order: {} failed", UserContext.getUserId(), orderForAdd);
+
+            throw new NoAuthorityException();
+        }
 
         return commonServiceClient.addOrder(orderForAdd);
     }
@@ -336,16 +424,15 @@ public class UserController {
     @Api
     @PostMapping("/order/update")
     public ResponseEntity<Result> updateOrder(@RequestBody OrderForUpdate orderForUpdate) {
-//          TODO Auth
-//        if (orderForUpdate.getUserId() == null) {
-//            throw new NoAuthorityException();
-//        }
-//
-//        int userId = orderForUpdate.getUserId();
-//
-//        if (userId != UserContext.getUserId()) {
-//            throw new NoAuthorityException();
-//        }
+        if (orderForUpdate.getUserId() == null) {
+            throw new NoAuthorityException();
+        }
+
+        int userId = orderForUpdate.getUserId();
+
+        if (userId != UserContext.getUserId()) {
+            throw new NoAuthorityException();
+        }
 
         return commonServiceClient.updateOrder(orderForUpdate);
     }
@@ -359,10 +446,10 @@ public class UserController {
     @Api
     @PostMapping("/order/delete")
     public ResponseEntity<Result> deleteOrder(@RequestBody OrderForDelete itemForDelete) {
-        // TODO
-//        if (!Objects.equals(itemForDelete.getUserId(), UserContext.getUserId())) {
-//            throw new NoAuthorityException();
-//        }
+        if (!Objects.equals(itemForDelete.getUserId(), UserContext.getUserId())) {
+
+            throw new NoAuthorityException();
+        }
 
         return commonServiceClient.deleteOrder(itemForDelete);
     }
@@ -374,11 +461,11 @@ public class UserController {
      * @return 返回一个ResponseEntity对象，其中包含获取优惠券操作的结果。如果操作成功，body中包含具体结果数据。
      */
     @Api
-    @PostMapping("/coupon/get")
-    public Page<CouponSubstance> getCoupon(@RequestBody CouponSpecification specification) {
+    @PostMapping("/coupon/query")
+    public Page<CouponView> getCoupon(@RequestBody CouponSpecification specification) {
         // 调用commonServiceClient的getCoupon方法获取优惠券信息，并将结果封装成成功响应返回
         specification.setUserId(UserContext.getUserId());
 
-        return commonServiceClient.getCoupon(specification);
+        return commonServiceClient.queryCoupon(specification);
     }
 }

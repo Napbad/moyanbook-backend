@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import java.util.Enumeration;
-
 
 /**
  * jwt令牌校验的拦截器
@@ -21,10 +19,7 @@ import java.util.Enumeration;
 @Component
 public class UserContextInterceptor implements HandlerInterceptor {
 
-    private final JwtProperties jwtProperties;
-
     public UserContextInterceptor(JwtProperties jwtProperties) {
-        this.jwtProperties = jwtProperties;
     }
 
     /**
@@ -48,7 +43,9 @@ public class UserContextInterceptor implements HandlerInterceptor {
 //            return false;
 //        }
 
-        UserContext.setUserId(0);
+//        UserContext.setUserId(Integer.valueOf(header));
+
+        UserContext.setUserId(7);
 
         return true;
     }

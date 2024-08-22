@@ -1,12 +1,16 @@
-export com.moyanshushe.model.entity.Label
-    -> package com.moyanshushe.model.dto.label
+export com.moyanshushe.model.entity.Category
+    -> package com.moyanshushe.model.dto.category
 
-input LabelInput {
+input CategoryCreateInput {
+    name
+}
+
+input CategoryUpdateInput {
     id
     name
 }
 
-specification LabelSpecification {
+specification CategorySpecification {
     ids: MutableList<Int?>?
 
     page: Int?
@@ -15,11 +19,11 @@ specification LabelSpecification {
     like(name)
 }
 
-LabelForDelete {
+CategoryForDelete {
     ids: MutableList<Int?>
 }
 
-LabelSubstance {
+CategorySubstance {
     id
     name
 }

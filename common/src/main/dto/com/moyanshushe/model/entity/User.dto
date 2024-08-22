@@ -1,8 +1,7 @@
 export com.moyanshushe.model.entity.User
     -> package com.moyanshushe.model.dto.user
 
-input unsafe UserForVerify {
-    id
+input UserForVerify {
     phone
     email
 }
@@ -21,8 +20,8 @@ input UserForRegister {
 }
 
 input UserForLogin {
-    id
-    name
+    id?
+    name?
     phone
     email
     password
@@ -93,8 +92,12 @@ specification UserSpecification {
     }
     email
     phone
-    createPersonId
-    updatePersonId
+    createPerson {
+        id
+    }
+    updatePerson {
+        id
+    }
     ge(lastLoginTime)
     le(lastLoginTime)
     ge(createTime)
@@ -111,7 +114,6 @@ specification UserSpecification {
 specification PublicUserSpecification {
     id
     like(name)
-    status
     type
     email
     phone
@@ -119,5 +121,4 @@ specification PublicUserSpecification {
 
     page: Int?
     pageSize: Int?
-
 }

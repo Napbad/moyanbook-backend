@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-
+// 成员工作类，由于无支付功能，暂时弃用
 @Api
 @Slf4j
 @RestController

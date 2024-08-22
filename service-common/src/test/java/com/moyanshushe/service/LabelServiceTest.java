@@ -5,10 +5,10 @@ package com.moyanshushe.service;
  * Version: 1.0
  */
 
-import com.moyanshushe.model.dto.label.LabelForDelete;
-import com.moyanshushe.model.dto.label.LabelInput;
-import com.moyanshushe.model.dto.label.LabelSpecification;
-import com.moyanshushe.model.dto.label.LabelSubstance;
+import com.moyanshushe.model.dto.category.CategoryForDelete;
+import com.moyanshushe.model.dto.category.CategoryInput;
+import com.moyanshushe.model.dto.category.CategorySpecification;
+import com.moyanshushe.model.dto.category.CategorySubstance;
 import org.babyfish.jimmer.Page;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -22,15 +22,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class LabelServiceTest {
+class CategoryServiceTest {
 
     @Autowired
-    LabelService labelService;
+    CategoryService labelService;
 
     @Test
     @Order(1)
     void addTest() {
-        LabelInput labelInput = new LabelInput();
+        CategoryInput labelInput = new CategoryInput();
         labelInput.setName("test label1");
 
         Boolean added = labelService.add(labelInput);
@@ -52,10 +52,10 @@ class LabelServiceTest {
     @Test
     @Order(2)
     void getTest() {
-        LabelSpecification labelSpecification = new LabelSpecification();
-        labelSpecification.setName("test label");
+        CategorySpecification labelSpecification = new CategorySpecification();
+        labelSpecification.setName("test category");
 
-        Page<LabelSubstance> labelSubstances = labelService.query(labelSpecification);
+        Page<CategorySubstance> labelSubstances = labelService.query(labelSpecification);
 
         assertEquals(2, labelSubstances.getTotalRowCount());
 
@@ -69,16 +69,16 @@ class LabelServiceTest {
     @Test
     @Order(3)
     void updateTest() {
-        LabelInput labelInput = new LabelInput();
+        CategoryInput labelInput = new CategoryInput();
 
-        LabelSpecification labelSpecification = new LabelSpecification();
+        CategorySpecification labelSpecification = new CategorySpecification();
         labelSpecification.setName("test label1");
 
-        Page<LabelSubstance> labelSubstances = labelService.query(labelSpecification);
+        Page<CategorySubstance> labelSubstances = labelService.query(labelSpecification);
 
         assertEquals(1, labelSubstances.getTotalRowCount());
 
-        LabelSubstance substance = labelSubstances.getRows().getFirst();
+        CategorySubstance substance = labelSubstances.getRows().getFirst();
 
         labelInput.setName("test label1 - updated");
         labelInput.setId(substance.getId());
@@ -97,14 +97,14 @@ class LabelServiceTest {
     @Test
     @Order(4)
     void testDelete() {
-        LabelForDelete delete = new LabelForDelete();
+        CategoryForDelete delete = new CategoryForDelete();
 
-        LabelSpecification labelSpecification = new LabelSpecification();
+        CategorySpecification labelSpecification = new CategorySpecification();
 
-        Page<LabelSubstance> page = labelService.query(labelSpecification);
+        Page<CategorySubstance> page = labelService.query(labelSpecification);
 
         delete.setIds(page.getRows().stream()
-                .map(LabelSubstance::getId)
+                .map(CategorySubstance::getId)
                 .filter(id -> id > 5)
                 .toList());
 

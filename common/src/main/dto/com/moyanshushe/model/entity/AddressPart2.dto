@@ -1,7 +1,12 @@
 export com.moyanshushe.model.entity.AddressPart2
     -> package com.moyanshushe.model.dto.address_part2
 
-input AddressPart2Input {
+input AddressPart2CreateInput {
+    name
+    parentAddress
+}
+
+input AddressPart2UpdateInput {
     id
     name
     parentAddress
@@ -10,7 +15,6 @@ input AddressPart2Input {
 AddressPart2ForDelete {
     ids: MutableList<Int?>
 }
-
 
 specification AddressPart2Specification {
     id

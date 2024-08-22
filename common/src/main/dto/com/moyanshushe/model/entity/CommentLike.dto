@@ -7,9 +7,9 @@ CommentLikeForAdd {
 }
 
 CommentLikeForDelete {
+    userId
     commentId
 }
-
 
 specification CommentLikeSpecification {
     userId

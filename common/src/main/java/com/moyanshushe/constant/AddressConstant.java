@@ -12,6 +12,8 @@ public class AddressConstant {
     public static final String ADDRESS_DELETE_SUCCESS = "地址删除成功";
     public static final String ADDRESS_DELETE_FAILURE = "地址删除失败";
 
+    public static final String ADDRESS_EXISTS_FAILURE = "地址已存在";
+
     private AddressConstant() {
     }
 }

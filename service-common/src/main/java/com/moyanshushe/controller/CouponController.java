@@ -1,11 +1,8 @@
 package com.moyanshushe.controller;
 
 import com.moyanshushe.constant.CouponConstant;
-import com.moyanshushe.constant.CommonConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.coupon.CouponForDelete;
-import com.moyanshushe.model.dto.coupon.CouponSpecification;
-import com.moyanshushe.model.dto.coupon.CouponSubstance;
+import com.moyanshushe.model.dto.coupon.*;
 import com.moyanshushe.service.CouponService;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.Page;
@@ -42,11 +39,11 @@ public class CouponController {
      * @return 包含优惠券实体的响应体
      */
     @Api
-    @PostMapping("/get")
-    public ResponseEntity<Result> get(
+    @PostMapping("/query")
+    public ResponseEntity<Result> query(
             @RequestBody CouponSpecification couponSpecification) {
 
-        Page<CouponSubstance> page = service.query(couponSpecification);
+        Page<CouponView> page = service.query(couponSpecification, CouponView.class);
 
         return ResponseEntity.ok(
                 Result.success(page)
@@ -62,12 +59,12 @@ public class CouponController {
     @Api
     @PostMapping("/add")
     public ResponseEntity<Result> add(
-            @RequestBody CouponSubstance couponSubstance) {
+            @RequestBody CouponCreateInput couponSubstance) {
 
-        Boolean result = service.add(couponSubstance);
+        service.add(couponSubstance);
 
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result) ? Result.success(CouponConstant.COUPON_ADD_SUCCESS) : Result.error(CouponConstant.COUPON_ADD_FAIL)
+                Result.success(CouponConstant.COUPON_ADD_SUCCESS)
         );
     }
 
@@ -80,18 +77,12 @@ public class CouponController {
     @Api
     @PostMapping("/update")
     public ResponseEntity<Result> update(
-            @RequestBody CouponSubstance couponSubstance) {
+            @RequestBody CouponInputForUpdate couponSubstance) {
 
-        if (couponSubstance.getId() == null) {
-            return ResponseEntity.ok(Result.error(CommonConstant.INPUT_INVALID));
-        }
-
-        Boolean result = service.update(couponSubstance);
+        service.update(couponSubstance);
 
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result)
-                        ? Result.success(CouponConstant.COUPON_UPDATE_SUCCESS)
-                        : Result.error(CouponConstant.COUPON_UPDATE_FAIL)
+                        Result.success(CouponConstant.COUPON_UPDATE_SUCCESS)
         );
     }
 
@@ -106,12 +97,10 @@ public class CouponController {
     public ResponseEntity<Result> delete(
             @RequestBody CouponForDelete couponForDelete) {
 
-        Boolean result = service.delete(couponForDelete);
+        service.delete(couponForDelete);
 
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result)
-                        ? Result.success(CouponConstant.COUPON_DELETE_SUCCESS)
-                        : Result.error(CouponConstant.COUPON_DELETE_FAIL)
+                        Result.success(CouponConstant.COUPON_DELETE_SUCCESS)
         );
     }
 }

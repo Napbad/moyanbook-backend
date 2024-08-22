@@ -7,10 +7,7 @@ package com.moyanshushe.service;
 
 */
 
-import com.moyanshushe.model.dto.comment.CommentForAdd;
-import com.moyanshushe.model.dto.comment.CommentForDelete;
-import com.moyanshushe.model.dto.comment.CommentForUpdate;
-import com.moyanshushe.model.dto.comment.CommentSpecification;
+import com.moyanshushe.model.dto.comment.*;
 import com.moyanshushe.model.entity.Comment;
 import org.babyfish.jimmer.Page;
 
@@ -22,4 +19,6 @@ public interface CommentService {
     void update(CommentForUpdate comment);
 
     void delete(CommentForDelete comment);
+
+    Page<Comment> queryPublic(PublicCommentSpecification specification);
 }

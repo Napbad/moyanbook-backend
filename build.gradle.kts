@@ -38,22 +38,6 @@ val commonsPoolVersion = "2.11.1"
 val nacosVersion = "2023.0.1.0"
 val aliOOSVersion = "3.17.4"
 val jsrVersion = "2.17.2"
-//
-//val feignCoreVersion = "newest"
-//val springVersion = "newest"
-//val springCloudLoadBalancerVersion = "newest"
-//val jimmerVersion = "newest"
-//val druidVersion = "newest"
-//val jwtVersion = "newest"
-//val jaxbVersion = "newest"
-//val jaxbRuntimeVersion = "newest"
-//val lombokVersion = "newest"
-//val aspectVersion = "newest"
-//val junitPlatformLauncherVersion = "newest"
-//val javaMailVersion = "newest"
-//val commonsPoolVersion = "newest"
-//val nacosVersion = "newest"
-//val aliOOSVersion = "newest"
 
 allprojects {
     apply(plugin = "java")
@@ -74,6 +58,7 @@ allprojects {
 
 
         // Utils
+
         implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jsrVersion")
         implementation("io.jsonwebtoken:jjwt:$jwtVersion")
         implementation("org.springframework.boot:spring-boot-starter-mail")

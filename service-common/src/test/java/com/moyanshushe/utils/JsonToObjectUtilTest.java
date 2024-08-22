@@ -29,12 +29,12 @@ class JsonToObjectUtilTest {
                 "  \"user\": {\n" +
                 "    \"id\": 1\n" +
                 "  },\n" +
-                "  \"labels\": [\n" +
+                "  \"categories\": [\n" +
                 "    {\n" +
                 "      \"id\": 1\n" +
                 "    }\n" +
                 "  ],\n" +
-                "  \"updatePersonId\": 1\n" +
+                "  \"updatePerson\": {\n\"id\": 1 \n}" +
                 "}", ItemForUpdate.class);
 
         System.out.println(itemForUpdate);

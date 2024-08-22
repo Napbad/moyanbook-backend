@@ -9,12 +9,10 @@ package com.moyanshushe.service.impl;
 
 import com.moyanshushe.mapper.CommentHistoryMapper;
 import com.moyanshushe.mapper.CommentMapper;
-import com.moyanshushe.model.dto.comment.CommentForAdd;
-import com.moyanshushe.model.dto.comment.CommentForDelete;
-import com.moyanshushe.model.dto.comment.CommentForUpdate;
-import com.moyanshushe.model.dto.comment.CommentSpecification;
+import com.moyanshushe.model.dto.comment.*;
 import com.moyanshushe.model.dto.comment_history.CommentHistoryForAdd;
 import com.moyanshushe.model.entity.Comment;
+import com.moyanshushe.model.entity.Fetchers;
 import com.moyanshushe.service.CommentService;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
@@ -39,7 +37,30 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Page<Comment> query(CommentSpecification specification) {
-        return commentMapper.query(specification);
+        return commentMapper.query(specification,
+                Fetchers.COMMENT_FETCHER
+                        .commenter()
+                        .content()
+                        .parentId()
+                        .labelId()
+                        .commentTime()
+                        .likes()
+                        .recursiveChildren(
+                                cfg -> {
+                                    cfg.depth(2);
+                                }
+                        ).commentLike(
+                                Fetchers.COMMENT_LIKE_FETCHER
+                                        .user(
+                                                Fetchers.USER_FETCHER
+                                                        .name()
+                                                        .profileUrl()
+                                                        .type()
+                                                        .gender()
+                                        )
+                                        .likeDate()
+                        )
+        );
     }
 
     @Override
@@ -63,5 +84,24 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void delete(CommentForDelete comment) {
         commentMapper.delete(comment);
+    }
+
+    @Override
+    public Page<Comment> queryPublic(PublicCommentSpecification specification) {
+       return commentMapper.query(
+               specification,
+                Fetchers.COMMENT_FETCHER
+                        .commenter()
+                        .content()
+                        .parentId()
+                        .labelId()
+                        .commentTime()
+                        .likes()
+                        .recursiveChildren(
+                                cfg -> {
+                                    cfg.depth(2);
+                                }
+                        )
+        );
     }
 }

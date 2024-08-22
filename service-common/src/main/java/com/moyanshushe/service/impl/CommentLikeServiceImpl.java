@@ -12,6 +12,7 @@ import com.moyanshushe.mapper.CommentMapper;
 import com.moyanshushe.model.dto.comment.CommentSpecification;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForAdd;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForDelete;
+import com.moyanshushe.model.dto.comment_likes.CommentLikeSpecification;
 import com.moyanshushe.model.entity.*;
 import com.moyanshushe.service.CommentLikeService;
 import org.babyfish.jimmer.Page;
@@ -67,10 +68,35 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
     }
 
+    @Override
+    public Page<CommentLike> query(CommentLikeSpecification specification) {
+
+        return jSqlClient.createQuery(table)
+                .where(specification)
+                .select(
+                        table.fetch(
+                                Fetchers.COMMENT_LIKE_FETCHER
+                                        .comment(
+                                        Fetchers.COMMENT_FETCHER
+                                                .label(
+                                                        Fetchers.LABEL_FETCHER
+                                                                .name()
+                                                )
+                                        )
+                        )
+                ).fetchPage(
+                        specification.getPage() != null ? specification.getPage() : 1,
+                        specification.getPageSize() != null ? specification.getPageSize() : 10
+                );
+    }
+
     private Comment queryOneComment(int commentId) {
         CommentSpecification commentSpecification = new CommentSpecification();
         commentSpecification.setId(commentId);
-        Page<Comment> query = commentMapper.query(commentSpecification);
+        Page<Comment> query = commentMapper.query(
+                commentSpecification,
+                Fetchers.COMMENT_FETCHER.allScalarFields()
+        );
 
         if (query.getTotalRowCount() != 1) {
             throw new DBException();

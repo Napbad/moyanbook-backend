@@ -43,9 +43,14 @@ class AddressServiceImplTest {
         ofAddressPart2.setId(1);
         substance.setAddressPart1(ofAddressPart1);
         substance.setAddressPart2(ofAddressPart2);
-        substance.setCreatePersonId(1);
-        substance.setUpdatePersonId(1);
 
+        AddressSubstance.TargetOf_createPerson targetOfCreatePerson = new AddressSubstance.TargetOf_createPerson();
+        targetOfCreatePerson.setId(1);
+        AddressSubstance.TargetOf_updatePerson targetOfUpdatePerson = new AddressSubstance.TargetOf_updatePerson();
+        targetOfUpdatePerson.setId(1);
+
+        substance.setCreatePerson(targetOfCreatePerson);
+        substance.setUpdatePerson(targetOfUpdatePerson);
         Boolean added = addressService.add(substance);
         Boolean added1 = addressService.add(substance);
 
@@ -85,8 +90,14 @@ class AddressServiceImplTest {
         substance.setAddress("test address2");
         substance.setAddressPart1(targetOfAddressPart1);
         substance.setAddressPart2(targetOfAddressPart2);
-        substance.setCreatePersonId(1);
-        substance.setUpdatePersonId(1);
+
+        AddressSubstance.TargetOf_createPerson targetOfCreatePerson = new AddressSubstance.TargetOf_createPerson();
+        targetOfCreatePerson.setId(1);
+        AddressSubstance.TargetOf_updatePerson targetOfUpdatePerson = new AddressSubstance.TargetOf_updatePerson();
+        targetOfUpdatePerson.setId(1);
+
+        substance.setCreatePerson(targetOfCreatePerson);
+        substance.setUpdatePerson(targetOfUpdatePerson);
 
         Boolean added = addressService.add(substance);
         assertTrue(added);

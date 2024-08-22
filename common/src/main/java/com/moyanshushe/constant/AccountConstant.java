@@ -32,6 +32,8 @@ public class AccountConstant {
     public static final String ACCOUNT_EMAIL_ENCODE = "******";
 
     public static final String INSUFFICIENT_AUTHORITY = "权限不足";
+    public static final String PASSWORD_CHANGE_FAILURE = "密码修改失败";
+    public static final String PASSWORD_CHANGE_SUCCESS = "密码修改成功";
 
     private AccountConstant() {
 

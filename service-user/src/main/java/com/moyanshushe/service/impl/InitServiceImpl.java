@@ -33,7 +33,7 @@ public class InitServiceImpl implements InitService {
                 .select(itemCodeTable.codePart2().max())
                 .execute();
 
-        if (list.size() != 1) {
+        if (list.isEmpty()) {
             throw new InitFailedException();
         } else {
             ItemCodeGenerator.init(list.getFirst());

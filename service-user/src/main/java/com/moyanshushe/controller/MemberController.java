@@ -13,7 +13,7 @@ import com.moyanshushe.constant.VerifyConstant;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.dto.address.AddressSpecification;
 import com.moyanshushe.model.dto.item.ItemSpecification;
-import com.moyanshushe.model.dto.label.LabelSpecification;
+import com.moyanshushe.model.dto.category.CategorySpecification;
 import com.moyanshushe.model.dto.member.*;
 import com.moyanshushe.model.dto.order.OrderSpecification;
 import com.moyanshushe.model.entity.Member;
@@ -28,8 +28,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
+/**
+ * 成员，负责处理成员（配送者）账户相关的HTTP请求
+ */
 @Api
 @Slf4j
+
 @RestController
 @RequestMapping({"/member"})
 public class MemberController {
@@ -40,8 +44,8 @@ public class MemberController {
 
     // 构造函数：初始化用户服务和JWT属性
     public MemberController(MemberAccountService memberAccountService,
-                           JwtProperties jwtProperties,
-                           CommonServiceClient commonServiceClient) {
+                            JwtProperties jwtProperties,
+                            CommonServiceClient commonServiceClient) {
         this.memberAccountService = memberAccountService;
         this.jwtProperties = jwtProperties;
         this.commonServiceClient = commonServiceClient;
@@ -53,6 +57,22 @@ public class MemberController {
      * 注册用户
      *
      * @param memberForRegister 用户注册信息
+     *                          input unsafe MemberForRegister {
+     *                          id
+     *                          name
+     *                          gender
+     *                          profileUrl?
+     *                          email
+     *                          phone
+     *                          password
+     *                          address{
+     *                          id
+     *                          }
+     *                          captcha: String
+     *                          createPerson{
+     *                          id
+     *                          }
+     *                          }
      * @return 注册成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
@@ -72,7 +92,14 @@ public class MemberController {
      * 用户登录
      *
      * @param memberForLogin 用户登录信息
-     * @return 登录成功返回200和包含JWT的成功消息，失败返回401和错误消息
+     *                       input MemberForLogin {
+     *                       id --
+     *                       name  --
+     *                       phone -- choose one
+     *                       email --
+     *                       password
+     *                       }
+     * @return 登录成功返回200, 用户信息和包含JWT的成功消息，失败返回401和错误消息
      */
     @Api
     @PostMapping({"/login"})
@@ -99,6 +126,19 @@ public class MemberController {
      * 更新用户信息
      *
      * @param memberForUpdate 用户更新信息
+     *                        MemberForUpdate {
+     *                        id!
+     *                        name
+     *                        gender
+     *                        profileUrl
+     *                        address {
+     *                        id
+     *                        }
+     *                        <p>
+     *                        updatePerson{
+     *                        id
+     *                        }?
+     *                        }
      * @return 更新成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
@@ -113,37 +153,60 @@ public class MemberController {
                 : ResponseEntity.badRequest().body(Result.error(AccountConstant.ACCOUNT_CHANGE_FAILURE));
     }
 
+    /**
+     * @param memberForUpdatePassword MemberForUpdatePassword {
+     *                                id
+     *                                password
+     *                                email
+     *                                phone?
+     *                                newPassword: String
+     *                                captcha: String
+     *                                <p>
+     *                                updatePerson{
+     *                                id
+     *                                } ？
+     *                                }
+     * @return 更改成功返回200和成功消息，失败返回错误消息
+     */
     @Api
     @PostMapping({"/change-password"})
     public ResponseEntity<Result> changePassword(@RequestBody MemberForUpdatePassword memberForUpdatePassword) {
         log.info("member change password: {}", memberForUpdatePassword.getId());
 
-//        boolean isUpdated = this.memberService.memberUpdatePassword(memberForUpdatePassword);
+        boolean isUpdated = this.memberAccountService.updatePassword(memberForUpdatePassword);
 
-//        return isUpdated
-//                ? ResponseEntity.ok(Result.success(AccountConstant.USER_CHANGE_SUCCESS))
-//                : ResponseEntity.badRequest().body(Result.error(AccountConstant.USER_CHANGE_FAILURE));
-        return ResponseEntity.ok(Result.success(Result.success(AccountConstant.ACCOUNT_CHANGE_SUCCESS)));
+        return isUpdated
+                ? ResponseEntity.ok(Result.success(AccountConstant.PASSWORD_CHANGE_SUCCESS))
+                : ResponseEntity.badRequest().body(Result.error(AccountConstant.PASSWORD_CHANGE_FAILURE));
     }
 
     /**
      * 绑定用户信息
      *
      * @param memberForBinding 用户绑定信息
+     *                         MemberForBinding {
+     *                         id !
+     *                         phone -- choose one
+     *                         email --
+     *                         captcha: String !
+     *                         <p>
+     *                         updatePerson{
+     *                         id
+     *                         }?
+     *                         }
      * @return 绑定成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
     @PostMapping({"/bind"})
-    public ResponseEntity<Result> bind(MemberForBinding memberForBinding) {
+    public ResponseEntity<Result> bind(@RequestBody MemberForBinding memberForBinding) {
 
         log.info("member: {} binding", memberForBinding.getId());
 
-//        boolean bindSuccess = this.memberService.bind(memberForBinding);
+        boolean bindSuccess = this.memberAccountService.bind(memberForBinding);
 
-//        return bindSuccess
-//                ? ResponseEntity.ok(Result.success(AccountConstant.USER_BIND_SUCCESS))
-//                : ResponseEntity.badRequest().body(Result.error(AccountConstant.USER_BIND_FAILURE));
-        return ResponseEntity.ok(Result.success(Result.success(AccountConstant.ACCOUNT_BIND_SUCCESS)));
+        return bindSuccess
+                ? ResponseEntity.ok(Result.success(AccountConstant.ACCOUNT_BIND_SUCCESS))
+                : ResponseEntity.badRequest().body(Result.error(AccountConstant.ACCOUNT_BIND_FAILURE));
     }
 
     /**
@@ -164,6 +227,11 @@ public class MemberController {
      * 验证用户信息
      *
      * @param memberForVerify 用户验证信息
+     *                        input MemberForVerify {
+     *                        id ?
+     *                        phone ?
+     *                        email !
+     *                        }
      * @return 验证成功返回200和成功消息
      */
     @Api
@@ -178,6 +246,7 @@ public class MemberController {
      * 根据指定的物品规格获取物品信息。
      *
      * @param specification 物品规格详情
+     *
      * @return 返回物品查询结果
      */
     @Api
@@ -190,13 +259,13 @@ public class MemberController {
     /**
      * 根据指定条件获取标签信息。
      *
-     * @param label 查询标签的条件
+     * @param category 查询标签的条件
      * @return 返回标签查询结果
      */
     @Api
-    @PostMapping("/label/fetch")
-    public ResponseEntity<Result> fetchLabels(@RequestBody LabelSpecification label) {
-        return commonServiceClient.queryLabels(label);
+    @PostMapping("/category/fetch")
+    public ResponseEntity<Result> fetchCategories(@RequestBody CategorySpecification category) {
+        return commonServiceClient.queryCategories(category);
     }
 
     /**
@@ -206,9 +275,9 @@ public class MemberController {
      * @return 返回地址查询结果
      */
     @Api
-    @PostMapping("/address/get")
-    public ResponseEntity<Result> getAddress(@RequestBody AddressSpecification addressForQuery) {
-        return commonServiceClient.getAddress(addressForQuery);
+    @PostMapping("/address/query")
+    public ResponseEntity<Result> queryAddress(@RequestBody AddressSpecification addressForQuery) {
+        return commonServiceClient.queryAddress(addressForQuery);
     }
 
     /**
@@ -219,7 +288,7 @@ public class MemberController {
      */
     @Api
     @PostMapping("/order/fetch")
-    public ResponseEntity<Result> getOrder(@RequestBody OrderSpecification specification) {
-        return commonServiceClient.getOrder(specification);
+    public ResponseEntity<Result> queryOrder(@RequestBody OrderSpecification specification) {
+        return commonServiceClient.queryOrder(specification);
     }
 }

@@ -19,4 +19,6 @@ public interface ItemService {
     Boolean update(ItemForUpdate itemForUpdate);
 
     Page<Item> query(ItemSpecification specification);
+
+    Page<Item> queryPublic(ItemSpecification specification);
 }

@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
 
         boolean addSuccess =
                 result.getTotalAffectedRowCount() ==
-                        (itemForAdd.getLabels().size() + itemForAdd.getImages().size() + 1);
+                        (1 + itemForAdd.getImages().size() + 1);
 
         if (addSuccess) {
             log.info("添加物品成功");
@@ -82,7 +82,27 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Page<Item> query(ItemSpecification specification) {
-        log.info("查询物品: {}", specification);
+        log.info("查询物品(personal): {}", specification);
         return mapper.fetch(specification, Fetchers.ITEM_FETCHER.allScalarFields());
+    }
+
+    @Override
+    public Page<Item> queryPublic(ItemSpecification specification) {
+        log.info("查询物品: {}", specification);
+        return mapper.fetch(specification,
+                Fetchers.ITEM_FETCHER
+                        .userId()
+                        .images()
+                        .category()
+                        .description()
+                        .name()
+                        .status()
+                        .price()
+                        .user(Fetchers.USER_FETCHER
+                                .name()
+                                .type()
+                                .profileUrl()
+                        )
+        );
     }
 }

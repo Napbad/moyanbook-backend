@@ -7,8 +7,11 @@
         "id": 3
       }
     ],
-    "updatePersonId": 1
-  },{
+    "updatePerson": {
+      "id": 1
+    }
+  },
+  {
     "id": "ca3f4f7c-93d6-4c5d-b47e-cfa2ee74df7a",
     "userId": 1,
     "items": [
@@ -16,8 +19,11 @@
         "id": 4
       }
     ],
-  "updatePersonId": 1
-  },{
+    "updatePerson": {
+      "id": 1
+    }
+  },
+  {
     "id": "ab9c1def-77c8-4acb-a22c-f10bddd0f743",
     "userId": 1,
     "items": [
@@ -25,6 +31,8 @@
         "id": 3
       }
     ],
-  "updatePersonId": 1
+    "updatePerson": {
+      "id": 1
+    }
   }
 ]

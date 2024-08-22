@@ -10,7 +10,6 @@ input OrderForAdd {
         id
     }
     createTime?
-    updatePersonId
 }
 
 OrderForUpdate {
@@ -19,7 +18,9 @@ OrderForUpdate {
     items {
         id
     }
-    updatePersonId
+    updatePerson{
+        id
+    }
 }
 
 OrderForDelete {
@@ -44,4 +45,9 @@ specification OrderSpecification {
     itemId: Int?
     page: Int?
     pageSize: Int?
+}
+
+OrderForPay {
+    orderId
+    userId
 }

@@ -49,15 +49,15 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
 
         String path = request.getPath().toString();
+        String token = exchange.getRequest()
+                .getHeaders().getFirst(AuthorityConstant.AUTHORIZATION_CONSTANT);
 
         if (isExcluded(path)) {
             ServerWebExchange serverWebExchange = exchange.mutate()
-                    .request(builder -> builder.header(AuthorityConstant.USER_AUTHENTICATION_ID, "12").build())
+                    .request(builder -> builder.header(AuthorityConstant.USER_AUTHENTICATION_ID, "0").build())
                     .build();
             return chain.filter(serverWebExchange);
         }
-
-        String token = (String) exchange.getAttributes().get(AuthorityConstant.AUTHORIZATION_CONSTANT);
 
         // 2、校验令牌
         try {
@@ -75,6 +75,11 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         } catch (Exception ex) {
             // 4、令牌校验不通过，响应401 Unauthorized状态码，并阻止执行后续处理器
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+
+            if (ex.getMessage().contains("JWT expired at")) {
+                return exchange.getResponse().setComplete();
+            }
+
             return exchange.getResponse().setComplete();
         }
     }

@@ -23,9 +23,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign:$openFeignVersion")
 
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jsrVersion")
-
-
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 

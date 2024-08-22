@@ -1,11 +1,11 @@
 package com.moyanshushe.mapper;
 
+import com.moyanshushe.model.dto.address.AddressCreateInput;
 import com.moyanshushe.model.dto.address.AddressForDelete;
 import com.moyanshushe.model.dto.address.AddressSpecification;
-import com.moyanshushe.model.dto.address.AddressSubstance;
+import com.moyanshushe.model.dto.address.AddressView;
 import com.moyanshushe.model.entity.*;
 import org.babyfish.jimmer.Page;
-import org.babyfish.jimmer.sql.DissociateAction;
 import org.babyfish.jimmer.sql.JSqlClient;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
 import org.babyfish.jimmer.sql.ast.tuple.Tuple2;
@@ -24,12 +24,10 @@ public class AddressMapper {
 
     private final JSqlClient jsqlClient;
     private final AddressTable table;
-    private final MemberTable memberTable;
 
     public AddressMapper(JSqlClient jsqlClient) {
         this.jsqlClient = jsqlClient;
         this.table = AddressTable.$;
-        this.memberTable = MemberTable.$;
     }
 
 
@@ -37,11 +35,13 @@ public class AddressMapper {
         return jsqlClient.getEntities().save(entity);
     }
 
-    public Optional<AddressSubstance> queryOneByAddress(String address) {
+    public Optional<AddressView> queryOneByAddress(AddressCreateInput address) {
         return jsqlClient.createQuery(table).where(
-                table.address().eq(address)
+                table.address().eq(address.getAddress()),
+                table.addressPart1().id().eq(address.getAddressPart1().getId()),
+                table.addressPart2().id().eq(address.getAddressPart2().getId())
         ).select(
-                table.fetch(AddressSubstance.class)
+                table.fetch(AddressView.class)
         ).execute().stream().findFirst();
     }
 
@@ -49,10 +49,10 @@ public class AddressMapper {
         return jsqlClient.save(entity);
     }
 
-    public @NotNull Page<Address> get(AddressSpecification addressSpecification) {
+    public @NotNull Page<AddressView> query(AddressSpecification addressSpecification) {
         return jsqlClient.createQuery(table)
                 .where(addressSpecification)
-                .select(table)
+                .select(table.fetch(AddressView.class))
                 .fetchPage(
                         addressSpecification.getPage() == null ? 0 : addressSpecification.getPage(),
                         addressSpecification.getPageSize() == null ? 10 : addressSpecification.getPageSize()
@@ -81,8 +81,6 @@ public class AddressMapper {
 
             }
         });
-
-
 
         jsqlClient.getAssociations(AddressProps.MEMBER)
                 .deleteAll(toDelete);

@@ -25,14 +25,11 @@ public interface CommentReport {
     @IdView
     int reporterId();
 
-    @NotNull
     @ManyToOne
     User reporter();
 
-    @NotNull
     LocalDateTime reportTime();
 
-    @NotNull
     String reason();
 
     int status();

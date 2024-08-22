@@ -1,7 +1,28 @@
 export com.moyanshushe.model.entity.Coupon
     -> package com.moyanshushe.model.dto.coupon
 
-input unsafe CouponSubstance {
+input CouponCreateInput {
+    name
+    price
+    status
+    createTime?
+    description
+    expirationTime?
+    userId
+}
+
+CouponInputForUpdate {
+    id
+    name
+    price
+    status
+    createTime?
+    description
+    expirationTime?
+    userId
+}
+
+CouponView {
     id
     name
     price
@@ -9,6 +30,7 @@ input unsafe CouponSubstance {
     createTime?
     expirationTime?
     userId
+    description
 }
 
 CouponForDelete {

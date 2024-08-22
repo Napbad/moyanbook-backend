@@ -3,8 +3,7 @@ export com.moyanshushe.model.entity.Item
 
 import com.moyanshushe.model.OrderRule
 
-input ItemForAdd {
-    id
+input unsafe ItemForAdd {
     name
     price
     description
@@ -14,9 +13,9 @@ input ItemForAdd {
         imageUrl
     }
 
-    userId
+    userId!
 
-    labels {
+    category {
         id
     }
 }
@@ -47,7 +46,7 @@ ItemForUpdate {
         id
     }
 
-    labels {
+    category {
         id
     }
 
@@ -55,7 +54,9 @@ ItemForUpdate {
         imageUrl
     }
 
-    updatePersonId
+    updatePerson {
+        id
+    }
 }
 
 ItemSubstance {
@@ -78,12 +79,14 @@ ItemSubstance {
         }
     }
 
-    labels {
+    category {
         name
     }
 
     createTime
-    updatePersonId
+    updatePerson {
+        id
+    }
     updateTime
 }
 
@@ -91,7 +94,9 @@ ItemUpdateStatus {
     id
     status
 
-    updatePersonId
+    updatePerson {
+        id
+    }
 }
 
 ItemPublicView {
@@ -110,13 +115,13 @@ ItemPublicView {
         name
     }
 
-    labels {
+    category {
         name
     }
 }
 
 specification ItemSpecification {
-    id
+    valueIn(id) as ids
     like(name)
     le(price) as maxPrice
     ge(price) as minPrice
@@ -124,9 +129,11 @@ specification ItemSpecification {
 
     flat(user) {
         valueIn(id) as userIds
+        type as userType
     }
 
-    flat(labels) {
+
+    flat(category) {
         valueIn(id) as labelIds
     }
 

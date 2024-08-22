@@ -6,7 +6,7 @@ import com.moyanshushe.model.OrderRule
 input CommentForAdd {
     content
     commenterId
-    itemId
+    labelId
     parentId
     commentTime
     likes
@@ -17,11 +17,6 @@ CommentForUpdate {
     id
     content
     commenterId
-    itemId
-    parentId
-    commentTime
-    likes
-    dislikes
 }
 
 CommentForDelete {
@@ -29,11 +24,64 @@ CommentForDelete {
     ids: MutableList<Int?>
 }
 
+CommentPublicView {
+    id
+    content
+    commenter {
+        id
+        profileUrl
+        name
+    }
+    labelId
+    parentId
+    commentTime
+    likes
+    children*
+}
+
+CommentView {
+    id
+    content
+    commenterId
+    labelId
+    parentId
+    commentTime
+    likes
+    dislikes
+    children*
+    commentLike {
+        id
+        user {
+            id
+            name
+            profileUrl
+        }
+    }
+}
+
 specification CommentSpecification {
     id
     like(content)
+    labelId
+    parentId
+    ge(commentTime)
+    le(commentTime)
+    ge(likes)
+    dislikes
+
+    page: Int?
+    pageSize: Int?
+
+    orderById: OrderRule?
+    orderByCommentTime: OrderRule?
+    orderByLikes: OrderRule?
+}
+
+specification PublicCommentSpecification {
+    id
+    like(content)
     commenterId
-    itemId
+    labelId
     parentId
     ge(commentTime)
     le(commentTime)

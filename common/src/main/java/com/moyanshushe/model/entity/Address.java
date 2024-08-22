@@ -9,7 +9,7 @@ import java.util.List;
  * 地址表
  */
 @Entity
-public interface Address {
+public interface Address extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,10 +44,5 @@ public interface Address {
     )
     int deleted();
 
-    @JsonIgnore
-    int createPersonId();
-
-    @JsonIgnore
-    int updatePersonId();
 }
 

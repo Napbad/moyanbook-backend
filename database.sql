@@ -1,8 +1,8 @@
-drop database if exists item_sell_db_test;
+drop database if exists item_sell_db;
 
-create database item_sell_db_test;
+create database item_sell_db;
 
-use item_sell_db_test;
+use item_sell_db;
 
 create table address_part2
 (
@@ -28,12 +28,14 @@ create table address
 (
     id               int auto_increment
         primary key,
-    address          varchar(255) default 'cqu' not null comment '详细地址',
-    address_part1    int          default 0     not null comment '地址段1',
-    address_part2    int          default 0     not null comment '地址段2',
-    is_deleted       int          default 0     not null comment '逻辑删除',
-    create_person_id int                        not null comment '创建人id',
-    update_person_id int                        not null comment '更新人id',
+    address          varchar(255) default 'cqu'             not null comment '详细地址',
+    address_part1    int          default 0                 not null comment '地址段1',
+    address_part2    int          default 0                 not null comment '地址段2',
+    is_deleted       int          default 0                 not null comment '逻辑删除',
+    create_person_id int                                    not null comment '创建人id',
+    update_person_id int                                    not null comment '更新人id',
+    create_time      timestamp    default CURRENT_TIMESTAMP not null,
+    update_time      timestamp    default CURRENT_TIMESTAMP not null,
     constraint address_address_part1_id_fk
         foreign key (address_part1) references address_part1 (id),
     constraint address_address_part2_id_fk
@@ -76,7 +78,7 @@ create table item_code
 )
     comment '物件码';
 
-create table label
+create table category
 (
     id   int auto_increment comment '标签id，主键'
         primary key,
@@ -251,8 +253,6 @@ create index comment_id
 create index modified_by
     on comment_history (modified_by);
 
-
-
 create table comment_like
 (
     id         int auto_increment
@@ -314,7 +314,7 @@ create table item_label_mapping
     constraint item_label_mapping_ibfk_1
         foreign key (item_id) references item (id),
     constraint item_label_mapping_ibfk_2
-        foreign key (label_id) references label (id)
+        foreign key (label_id) references category (id)
 );
 
 create index item_id
@@ -412,7 +412,7 @@ VALUES ('迎新优惠券', 10.00, '欢迎新用户，满100元可用', 0, 1),
        ('节日红包', 3.50, '节日限定，无门槛使用', 0, 4),
        ('生日礼券', 15.00, '生日当月专享，全场八折', 0, 5);
 -- 第一条记录
-INSERT INTO label (name)
+INSERT INTO category (name)
 VALUES ('科幻'),
        ('历史'),
        ('编程'),

@@ -15,6 +15,7 @@ import com.moyanshushe.model.dto.comment.CommentForUpdate;
 import com.moyanshushe.model.dto.comment.CommentSpecification;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForAdd;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForDelete;
+import com.moyanshushe.model.dto.comment_likes.CommentLikeSpecification;
 import com.moyanshushe.service.CommentLikeService;
 import com.moyanshushe.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -49,4 +50,8 @@ public class CommentLikeController {
         return ResponseEntity.ok(Result.success(CommentConstant.COMMENT_DELETE_SUCCESS));
     }
 
+    @PostMapping("/query")
+    public ResponseEntity<Result> query(@RequestBody CommentLikeSpecification specification) {
+        return ResponseEntity.ok(Result.success(commentLikeService.query(specification)));
+    }
 }

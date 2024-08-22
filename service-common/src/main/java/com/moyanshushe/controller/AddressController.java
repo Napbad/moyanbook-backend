@@ -1,13 +1,11 @@
 package com.moyanshushe.controller;
 
 import com.moyanshushe.constant.AddressConstant;
-import com.moyanshushe.constant.CommonConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.address.AddressForDelete;
-import com.moyanshushe.model.dto.address.AddressSpecification;
-import com.moyanshushe.model.dto.address.AddressSubstance;
+import com.moyanshushe.model.dto.address.*;
 import com.moyanshushe.model.entity.Address;
 import com.moyanshushe.service.AddressService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.client.meta.Api;
@@ -24,20 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Api
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/address")
 public class AddressController {
 
     private final AddressService addressService;
-
-    /**
-     * 通过@Autowired注解自动注入AddressService实例
-     * 用于在控制器中调用地址服务方法。
-     *
-     * @param addressService 地址服务接口的实现
-     */
-    public AddressController(AddressService addressService) {
-        this.addressService = addressService;
-    }
 
     /**
      * 查询地址列表
@@ -47,11 +36,13 @@ public class AddressController {
      * @return 包含地址列表的结果对象
      */
     @Api
-    @PostMapping("/get")
-    public ResponseEntity<Result> get(
+    @PostMapping("/query")
+    public ResponseEntity<Result> query(
             @RequestBody AddressSpecification addressSpecification) {
 
-        Page<Address> page = addressService.query(addressSpecification);
+        log.info("Received query request with specification: {}", addressSpecification);
+
+        Page<AddressView> page = addressService.query(addressSpecification);
 
         return ResponseEntity.ok(
                 Result.success(page)
@@ -62,18 +53,21 @@ public class AddressController {
      * 添加地址
      * 接收一个新的地址对象，将其添加到数据库。
      *
-     * @param addressSubstance 待添加的地址详情对象
+     * @param address 待添加的地址详情对象
      * @return 添加结果的对象，成功或失败
      */
     @Api
     @PostMapping("/add")
     public ResponseEntity<Result> add(
-            @RequestBody AddressSubstance addressSubstance) {
+            @RequestBody AddressCreateInput address
+    ) {
 
-        Boolean result = addressService.add(addressSubstance);
+        log.info("Received add request with address: {}", address);
+
+        Address result = addressService.add(address);
 
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result) ? Result.success(AddressConstant.ADDRESS_ADD_SUCCESS) : Result.error(AddressConstant.ADDRESS_ADD_FAILURE)
+                Result.success(AddressConstant.ADDRESS_ADD_SUCCESS, result)
         );
     }
 
@@ -81,25 +75,20 @@ public class AddressController {
      * 更新地址
      * 根据提供的地址对象更新数据库中的地址信息。
      *
-     * @param addressSubstance 待更新的地址详情对象，包含ID等标识信息
+     * @param address 待更新的地址详情对象，包含ID等标识信息
      * @return 更新结果的对象，成功或失败
      */
     @Api
     @PostMapping("/update")
     public ResponseEntity<Result> update(
-            @RequestBody AddressSubstance addressSubstance) {
+            @RequestBody AddressUpdateInput address
+    ) {
 
-        if (addressSubstance.getId() == null) {
-            return ResponseEntity.ok(Result.error(CommonConstant.INPUT_INVALID));
-        }
+        log.info("Received update request with address: {}", address);
 
-        Boolean result = addressService.update(addressSubstance);
+        addressService.update(address);
 
-        return ResponseEntity.ok(
-                Boolean.TRUE.equals(result)
-                        ? Result.success(AddressConstant.ADDRESS_UPDATE_SUCCESS)
-                        : Result.error(AddressConstant.ADDRESS_UPDATE_FAILURE)
-        );
+        return ResponseEntity.ok(Result.success(AddressConstant.ADDRESS_UPDATE_SUCCESS));
     }
 
     /**
@@ -112,14 +101,15 @@ public class AddressController {
     @Api
     @PostMapping("/delete")
     public ResponseEntity<Result> delete(
-            @RequestBody AddressForDelete addressForDelete) {
+            @RequestBody AddressForDelete addressForDelete
+    ) {
 
-        Boolean result = addressService.delete(addressForDelete);
+        log.info("Received delete request with address ID: {}", addressForDelete.getIds());
+
+        addressService.delete(addressForDelete);
 
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result)
-                        ? Result.success(AddressConstant.ADDRESS_DELETE_SUCCESS)
-                        : Result.error(AddressConstant.ADDRESS_DELETE_FAILURE)
+                Result.success(AddressConstant.ADDRESS_DELETE_SUCCESS)
         );
     }
 }

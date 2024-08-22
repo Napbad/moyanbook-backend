@@ -61,7 +61,7 @@ public interface Coupon {
 
     class Status {
         public static short NORMAL = 1;
-        public short EXPIRED = 2;
+        public static short EXPIRED = 2;
     }
 }
 

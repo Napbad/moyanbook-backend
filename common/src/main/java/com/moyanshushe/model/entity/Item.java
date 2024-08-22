@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import org.babyfish.jimmer.sql.*;
 
 
+import java.awt.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,7 +15,7 @@ import java.util.List;
  */
 @Entity
 //        (microServiceName = "common-service")
-public interface Item {
+public interface Item extends BaseEntityWithOnlyUpdate {
 
     /**
      * 书籍id，主键
@@ -46,21 +48,6 @@ public interface Item {
      */
     Short status();
 
-    /**
-     * 书籍创建时间
-     */
-    @JsonIgnore
-    LocalDate createTime();
-
-    /**
-     * 书籍更新时间
-     */
-    @JsonIgnore
-    LocalDate updateTime();
-
-    @JsonIgnore
-    int updatePersonId();
-
     // TODO 逻辑处理
     @IdView
     Integer userId();
@@ -82,6 +69,9 @@ public interface Item {
             inverseJoinColumnName = "label_id"
     )
     List<Label> labels();
+
+    @ManyToOne
+    Category category();
 
     @OneToMany(mappedBy = "item")
     List<ItemImage> images();
@@ -109,6 +99,9 @@ public interface Item {
     @Nullable
     MemberConfirm memberConfirm();
 
+    @Nullable
+    LocalDateTime createTime();
+
     @Default("0")
     @LogicalDeleted(
             "1"
@@ -117,16 +110,5 @@ public interface Item {
             name = "is_deleted"
     )
     int deleted();
-
-    class Status {
-        public static final short IN_USER = 00;
-        public static final short NORMAL = 10;
-        public static final short WAIT_FOR_PAYING = 20;
-        public static final short WAIT_FOR_SENDING = 30;
-        public static final short WAIT_FOR_RECEIVING = 40;
-        public static final short FINISHED = 50;
-
-        private Status() {}
-    }
 }
 

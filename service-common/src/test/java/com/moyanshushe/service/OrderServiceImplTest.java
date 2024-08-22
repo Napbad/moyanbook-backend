@@ -89,7 +89,11 @@ class OrderServiceImplTest {
                             OrderForUpdate orderForUpdate = new OrderForUpdate();
                             BeanUtils.copyProperties(order, orderForUpdate);
                             orderForUpdate.setUserId(2);
-                            orderForUpdate.setUpdatePersonId(2);
+                            OrderForUpdate.TargetOf_updatePerson targetOfUpdatePerson = new OrderForUpdate.TargetOf_updatePerson();
+                            targetOfUpdatePerson.setId(2);
+                            orderForUpdate.setUpdatePerson(
+                                    targetOfUpdatePerson
+                            );
                             return orderForUpdate;
                         }
                 )
@@ -113,7 +117,7 @@ class OrderServiceImplTest {
                 order -> {
                     assertNotNull(order.userId());
                     assertEquals(2, order.userId());
-                    assertEquals(2, order.updatePersonId());
+                    assertEquals(2, order.updatePerson().id());
                 }
         );
     }

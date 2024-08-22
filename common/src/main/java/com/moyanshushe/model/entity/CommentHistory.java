@@ -22,7 +22,6 @@ public interface CommentHistory {
     @IdView
     int commentId();
 
-    @NotNull
     @ManyToOne
     @OnDissociate(DissociateAction.DELETE)
     Comment comment();

@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
     /**
      * 构造函数
      *
-     * @param userMapper 用户mapper接口
-     * @param mailUtil 邮件工具类
+     * @param userMapper          用户mapper接口
+     * @param mailUtil            邮件工具类
      * @param stringRedisTemplate Redis字符串模板
      */
     public UserServiceImpl(UserMapper userMapper, MailUtil mailUtil, StringRedisTemplate stringRedisTemplate) {
@@ -70,6 +70,8 @@ public class UserServiceImpl implements UserService {
         if (captcha == null || !captcha.equals(user.getCaptcha())) {
             throw new CaptchaErrorException();
         }
+
+        user.setType(User.Type.NORMAL_USER);
 
         // 用户名和密码校验
         if (!AccountUtil.checkName(user.getName())) {
@@ -128,7 +130,6 @@ public class UserServiceImpl implements UserService {
 
         // 通过用户名、手机号或邮箱进行登录验证
         Optional<User> userOptional;
-        userForLogin.getName();
         UserFetcher fetcher = Fetchers.USER_FETCHER
                 .name(true)
                 .age(true)
@@ -137,10 +138,26 @@ public class UserServiceImpl implements UserService {
                 .phone(true)
                 .status(true)
                 .profileUrl(true)
-                .address(true)
+                .address(
+                        Fetchers.ADDRESS_FETCHER
+                                .address()
+                                .addressPart1(
+                                        Fetchers.ADDRESS_PART1_FETCHER
+                                                .name()
+                                )
+                                .addressPart2(
+                                        Fetchers.ADDRESS_PART2_FETCHER
+                                                .name()
+                                                .parentAddress()
+                                )
+                )
                 .password(true);
 
-        if (AccountUtil.checkName(userForLogin.getName())) {
+        if (userForLogin.getId() != null) {
+            userOptional = this.userMapper.findById(
+                    userForLogin.getId(), fetcher).stream().findFirst();
+
+        } else if (AccountUtil.checkName(userForLogin.getName())) {
 
             userOptional = this.userMapper.findByName(
                     userForLogin.getName(), fetcher).stream().findFirst();
@@ -202,8 +219,7 @@ public class UserServiceImpl implements UserService {
 
             if (userId == null) {
                 throw new UserNotLoginException();
-            }
-            else if (userId.equals(userForUpdate.getId())) {
+            } else if (userId.equals(userForUpdate.getId())) {
 
                 // 当前登录用户ID与要更新的用户ID匹配校验
                 SimpleSaveResult<User> result = this.userMapper.update(userForUpdate);
@@ -276,7 +292,7 @@ public class UserServiceImpl implements UserService {
 
 
         String captcha = stringRedisTemplate.opsForValue().get(RedisConstant.USER_CAPTCHA + userForUpdatePassword.getEmail());
-        if (captcha == null){
+        if (captcha == null) {
             throw new CaptchaErrorException(VerifyConstant.VERIFY_CODE_EXPIRED);
         } else if (!captcha.equals(userForUpdatePassword.getCaptcha())) {
             throw new CaptchaErrorException(VerifyConstant.CAPTCHA_ERROR);
@@ -288,10 +304,9 @@ public class UserServiceImpl implements UserService {
         Collection<User> users = userMapper.findById(userForUpdatePassword.getId(), Fetchers.USER_FETCHER.password());
         if (users != null && users.isEmpty()) {
             throw new AccountNotFoundException();
-        } else if (users.size() > 1){
+        } else if (users.size() > 1) {
             throw new DBException();
         }
-
 
 
         if (AccountUtil.checkPassword(userForUpdatePassword.getPassword())) {

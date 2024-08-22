@@ -8,10 +8,7 @@ package com.moyanshushe.mapper;
 */
 
 import com.moyanshushe.model.OrderRule;
-import com.moyanshushe.model.dto.comment.CommentForAdd;
-import com.moyanshushe.model.dto.comment.CommentForDelete;
-import com.moyanshushe.model.dto.comment.CommentForUpdate;
-import com.moyanshushe.model.dto.comment.CommentSpecification;
+import com.moyanshushe.model.dto.comment.*;
 import com.moyanshushe.model.entity.*;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.sql.JSqlClient;
@@ -35,7 +32,7 @@ public class CommentMapper {
         jSqlClient.save(comment);
     }
 
-    public @NotNull Page<Comment> query(CommentSpecification specification) {
+    public @NotNull  Page<Comment> query(CommentSpecification specification, CommentFetcher fetcher) {
         return jSqlClient.createQuery(table)
                 .where(specification)
                 .orderByIf(
@@ -55,16 +52,7 @@ public class CommentMapper {
                 )
                 .select(
                         table.fetch(
-                                Fetchers.COMMENT_FETCHER
-                                        .content()
-                                        .likes()
-                                        .commentTime()
-                                        .commenter(
-                                                Fetchers.USER_FETCHER
-                                                        .name()
-                                                        .profileUrl()
-                                        )
-                                        .recursiveChildren(it -> it.depth(2))
+                            fetcher
                         )
                 ).fetchPage(
                         specification.getPage() != null ? specification.getPage() : 0,
@@ -78,5 +66,19 @@ public class CommentMapper {
 
     public void delete(CommentForDelete comment) {
         jSqlClient.deleteByIds(Comment.class, comment.getIds());
+    }
+
+    public @NotNull Page<Comment> query(PublicCommentSpecification specification, CommentFetcher fetcher) {
+        return jSqlClient.createQuery(table)
+                .where(specification)
+                .select(
+                        table.fetch(
+                                fetcher
+                        )
+                )
+                .fetchPage(
+                        specification.getPage() != null ? specification.getPage() : 0,
+                        specification.getPageSize() != null ? specification.getPageSize() : 10
+                );
     }
 }

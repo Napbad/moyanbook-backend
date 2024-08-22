@@ -1,14 +1,16 @@
 package com.moyanshushe.service.impl;
 
+import com.moyanshushe.model.dto.address_part2.AddressPart2CreateInput;
 import com.moyanshushe.model.dto.address_part2.AddressPart2ForDelete;
-import com.moyanshushe.model.dto.address_part2.AddressPart2Input;
 import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
+import com.moyanshushe.model.dto.address_part2.AddressPart2UpdateInput;
 import com.moyanshushe.model.entity.AddressPart2;
 import com.moyanshushe.model.entity.AddressPart2Table;
 import com.moyanshushe.service.AddressPart2Service;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.sql.JSqlClient;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 /*
@@ -28,14 +30,14 @@ public class AddressPart2ServiceImpl implements AddressPart2Service {
     }
 
     @Override
-    public int add(AddressPart2Input addressPart2Input) {
-        SimpleSaveResult<AddressPart2> result = jsqlClient.save(addressPart2Input);
+    public @NotNull Integer add(AddressPart2CreateInput addressPart2Input) {
+        SimpleSaveResult<AddressPart2> result = jsqlClient.insert(addressPart2Input);
 
         return result.getModifiedEntity().id();
     }
 
     @Override
-    public void update(AddressPart2Input addressPart2Input) {
+    public void update(AddressPart2UpdateInput addressPart2Input) {
         jsqlClient.update(addressPart2Input);
     }
 

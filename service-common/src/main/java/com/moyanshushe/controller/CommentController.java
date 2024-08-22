@@ -10,10 +10,7 @@ package com.moyanshushe.controller;
 
 import com.moyanshushe.constant.CommentConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.comment.CommentForAdd;
-import com.moyanshushe.model.dto.comment.CommentForDelete;
-import com.moyanshushe.model.dto.comment.CommentForUpdate;
-import com.moyanshushe.model.dto.comment.CommentSpecification;
+import com.moyanshushe.model.dto.comment.*;
 import com.moyanshushe.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.client.meta.Api;
@@ -44,6 +41,11 @@ public class CommentController {
     @PostMapping("/query")
     public ResponseEntity<Result> query(@RequestBody CommentSpecification specification) {
         return ResponseEntity.ok(Result.success(commentService.query(specification)));
+    }
+
+    @PostMapping("/query-public")
+    public ResponseEntity<Result> queryPublic(@RequestBody PublicCommentSpecification specification) {
+        return ResponseEntity.ok(Result.success(commentService.queryPublic(specification)));
     }
 
     @PostMapping("/update")

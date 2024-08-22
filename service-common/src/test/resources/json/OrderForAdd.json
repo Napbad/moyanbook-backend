@@ -6,7 +6,9 @@
         "id": 1
       }
     ],
-    "updatePersonId": 1
+    "updatePerson": {
+      "id": 1
+    }
   },
   {
     "userId": 1,
@@ -15,6 +17,8 @@
         "id": 1
       }
     ],
-    "updatePersonId": 1
+    "updatePerson": {
+      "id": 1
+    }
   }
 ]

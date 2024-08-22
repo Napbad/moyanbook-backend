@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = BaseException.class)
     public ResponseEntity<Result> handleBaseException(BaseException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Result.error(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Result.error(ex.getMessage()));
     }
 
     @ExceptionHandler(value = SQLException.class)

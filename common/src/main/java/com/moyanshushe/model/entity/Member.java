@@ -7,6 +7,7 @@ import org.babyfish.jimmer.sql.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  * 代表数据库中的管理员表，用于存储管理员的信息和权限
  */
 @Entity
-public interface Member {
+public interface Member extends BaseEntity {
 
     /**
      * 管理员id
@@ -111,24 +112,6 @@ public interface Member {
     @OneToOne(mappedBy = "member")
     @Nullable
     MemberConfirm memberConfirm();
-
-    @JsonIgnore
-    int createPersonId();
-
-    @JsonIgnore
-    int updatePersonId();
-
-    /**
-     * 获取用户创建时间
-     * @return 用户创建时间
-     */
-    LocalDate createTime();
-
-    /**
-     * 获取用户更新时间
-     * @return 用户更新时间
-     */
-    LocalDate updateTime();
 
     /**
      * 管理员状态常量类

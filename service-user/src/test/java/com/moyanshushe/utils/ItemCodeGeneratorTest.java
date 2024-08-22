@@ -12,6 +12,7 @@ import com.moyanshushe.model.entity.Item;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ItemCodeGeneratorTest {
     @Test
@@ -34,9 +35,11 @@ public class ItemCodeGeneratorTest {
         assert itemSubstance.getUser().getAddress() != null;
         itemSubstance.getUser().getAddress().setAddress("Http");
         itemSubstance.getUser().getAddress().setId(10);
-        itemSubstance.setCreateTime(LocalDate.now());
-        itemSubstance.setUpdatePersonId(1);
-        itemSubstance.setUpdateTime(LocalDate.now());
+        itemSubstance.setCreateTime(LocalDateTime.now());
+        ItemSubstance.TargetOf_updatePerson targetOfUpdatePerson = new ItemSubstance.TargetOf_updatePerson();
+        targetOfUpdatePerson.setId(1);
+        itemSubstance.setUpdatePerson(targetOfUpdatePerson);
+        itemSubstance.setUpdateTime(LocalDateTime.now());
 
         ItemCodeSubstance itemCode =  new ItemCodeSubstance();
         Item entity = itemSubstance.toEntity();
