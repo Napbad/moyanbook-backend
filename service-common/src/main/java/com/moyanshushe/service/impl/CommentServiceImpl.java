@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
                                                         .type()
                                                         .gender()
                                         )
-                                        .likeDate()
+                                        .likeTime()
                         )
         );
     }

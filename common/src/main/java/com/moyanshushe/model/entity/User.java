@@ -15,7 +15,7 @@ import java.util.List;
  * 用户实体，对应数据库表"user"
  */
 @Entity
-public interface User extends BaseEntity {
+public interface    User extends BaseEntity {
 
     /**
      * 获取用户id，主键
@@ -79,10 +79,13 @@ public interface User extends BaseEntity {
      * 获取用户的地址信息
      * @return 地址信息
      */
-    @ManyToOne
+    @OneToOne
     @OnDissociate(DissociateAction.SET_NULL)
     @Nullable
     Address address();
+
+    @IdView
+    Integer addressId();
 
     /**
      * 获取用户拥有的优惠券列表

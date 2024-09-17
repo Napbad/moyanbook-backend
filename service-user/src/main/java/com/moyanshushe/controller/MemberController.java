@@ -252,7 +252,7 @@ public class MemberController {
     @Api
     @PostMapping("/item/fetch")
     public ResponseEntity<Result> fetchItem(@RequestBody ItemSpecification specification) {
-        return commonServiceClient.fetchItems(specification);
+        return commonServiceClient.queryItems(specification);
     }
 
 

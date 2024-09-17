@@ -4,7 +4,6 @@ export com.moyanshushe.model.entity.Order
 import java.util.UUID
 
 input OrderForAdd {
-    orderId?
     userId
     items {
         id
@@ -26,6 +25,34 @@ OrderForUpdate {
 OrderForDelete {
     ids: MutableList<UUID?>
     userId
+}
+
+OrderView {
+    userId
+    orderId
+    status
+    items {
+        id
+        images {
+            id
+            imageUrl
+        }
+        category {
+            id
+            name
+        }
+        name
+        status
+        description
+        user {
+            name
+            profileUrl
+            type
+            status
+        }
+        price
+    }
+    createTime
 }
 
 OrderSubstance {

@@ -8,10 +8,7 @@ package com.moyanshushe.controller;
 import com.moyanshushe.constant.AddressConstant;
 import com.moyanshushe.constant.WebIOConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.address_part2.AddressPart2CreateInput;
-import com.moyanshushe.model.dto.address_part2.AddressPart2ForDelete;
-import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
-import com.moyanshushe.model.dto.address_part2.AddressPart2UpdateInput;
+import com.moyanshushe.model.dto.address_part2.*;
 import com.moyanshushe.model.entity.AddressPart2;
 import com.moyanshushe.service.AddressPart2Service;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +50,7 @@ public class AddressPart2Controller {
     // 读取地址部分1
     @PostMapping("/query")
     public ResponseEntity<Result> queryAddressPart2(@RequestBody AddressPart2Specification specification) {
-        Page<AddressPart2> page = addressPart2Service.query(specification);
+        Page<AddressPart2View> page = addressPart2Service.query(specification);
 
         return ResponseEntity.ok(Result.success(page));
     }
@@ -63,7 +60,7 @@ public class AddressPart2Controller {
     public ResponseEntity<Result> updateAddressPart2(@RequestBody AddressPart2UpdateInput addressPart2Input) {
         addressPart2Service.update(addressPart2Input);
 
-        if (addressPart2Input.getId() == null || addressPart2Input.getParentAddress() == null) {
+        if (addressPart2Input.getId() == null || addressPart2Input.getParentAddressId() == null) {
             return ResponseEntity.badRequest().body(Result.error(WebIOConstant.INPUT_INVALID));
         }
 

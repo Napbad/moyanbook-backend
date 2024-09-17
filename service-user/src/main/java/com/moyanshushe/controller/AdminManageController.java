@@ -90,7 +90,7 @@ public class AdminManageController {
     @Api
     @PostMapping("/items/fetch")
     public ResponseEntity<Result> fetchItems(@RequestBody ItemSpecification specification) {
-        return commonServiceClient.fetchItems(specification);
+        return commonServiceClient.queryItems(specification);
     }
 
     /**

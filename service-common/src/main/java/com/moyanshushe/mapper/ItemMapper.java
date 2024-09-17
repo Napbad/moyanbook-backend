@@ -5,17 +5,21 @@ package com.moyanshushe.mapper;
  * Version: 1.0
  */
 
+import com.moyanshushe.exception.NoAuthorityException;
 import com.moyanshushe.model.OrderRule;
 import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.model.entity.Item;
 import com.moyanshushe.model.entity.ItemFetcher;
 import com.moyanshushe.model.entity.ItemTable;
+import com.moyanshushe.utils.UserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.sql.JSqlClient;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -34,14 +38,18 @@ public class ItemMapper {
     }
 
     public Integer delete(ItemForDelete itemForDelete) {
-        return jsqlClient.createDelete(table)
-                .whereIf(
-                        !itemForDelete.getIds().isEmpty(),
-                        () -> table.id().in(itemForDelete.getIds())
-                ).execute();
+        return jsqlClient.deleteByIds(Item.class, itemForDelete.getIds()).getAffectedRowCount(Item.class);
     }
 
     public SimpleSaveResult<Item> update(ItemForUpdate itemForUpdate) {
+        List<Long> num = jsqlClient.createQuery(table)
+                .where(table.id().eq(itemForUpdate.getId()))
+                .where(table.userId().eq(UserContext.getUserId()))
+                .select(table.count())
+                .execute();
+        if (num.isEmpty()) {
+            throw new NoAuthorityException();
+        }
         return jsqlClient.update(itemForUpdate.toEntity());
     }
 

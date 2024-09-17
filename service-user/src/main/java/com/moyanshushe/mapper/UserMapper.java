@@ -4,8 +4,12 @@ import com.moyanshushe.model.dto.user.UserForRegister;
 import com.moyanshushe.model.dto.user.UserForUpdate;
 import com.moyanshushe.model.entity.User;
 import com.moyanshushe.model.entity.UserFetcher;
+import com.moyanshushe.model.entity.UserProps;
 import com.moyanshushe.model.entity.UserTable;
 import org.babyfish.jimmer.sql.JSqlClient;
+import org.babyfish.jimmer.sql.ast.Selection;
+import org.babyfish.jimmer.sql.ast.mutation.AssociatedSaveMode;
+import org.babyfish.jimmer.sql.ast.mutation.SaveMode;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +36,7 @@ public class UserMapper {
     /**
      * 根据用户名和获取器查询用户列表
      *
-     * @param name 用户名
+     * @param name    用户名
      * @param fetcher 数据获取器，用于指定需要获取的关联数据
      * @return 用户列表，如果用户名为空或查询无结果则返回新创建的空列表
      */
@@ -54,6 +58,22 @@ public class UserMapper {
         ).execute();
     }
 
+    public List<User> findByName(String name, Selection<User> fetcher) {
+        // 如果用户名为空，返回新创建的空列表
+        if (name == null) {
+            return new ArrayList<>();
+        }
+
+        // 执行带关联数据查询的操作
+        return jSqlClient.createQuery(
+                table
+        ).where(
+                table.name().eq(name)
+        ).select(
+                fetcher
+        ).execute();
+    }
+
     /**
      * 更新用户信息。
      *
@@ -67,13 +87,12 @@ public class UserMapper {
     }
 
 
-
     /**
      * 更新用户信息。
      *
      * @param user 包含更新后用户信息的对象。
-     * 该方法会将传入的用户对象信息更新到数据库中。
-     * 对象中的每个属性都会被检查并更新，如果该属性已经存在。
+     *             该方法会将传入的用户对象信息更新到数据库中。
+     *             对象中的每个属性都会被检查并更新，如果该属性已经存在。
      */
     public void update(User user) {
         jSqlClient.update(user); // 使用jSqlClient的update方法更新用户信息到数据库
@@ -87,13 +106,15 @@ public class UserMapper {
      * @return 用户保存结果
      */
     public SimpleSaveResult<User> addUser(UserForRegister user) {
-        return jSqlClient.save(user.toEntity());
+        return jSqlClient.getEntities().saveCommand(user.toEntity())
+                .setMode(SaveMode.INSERT_ONLY)
+                .execute();
     }
 
     /**
      * 更新用户登录时间
      *
-     * @param id 用户ID
+     * @param id        用户ID
      * @param loginTime 登录时间
      */
     public void updateLoginTime(long id, LocalDate loginTime) {
@@ -102,14 +123,14 @@ public class UserMapper {
                 table.id().eq((int) id)
         ).set(
                 table.lastLoginTime(),
-               loginTime
+                loginTime
         ).execute();
     }
 
     /**
      * 根据邮箱查询用户列表
      *
-     * @param email 邮箱地址
+     * @param email   邮箱地址
      * @param fetcher 数据获取器，用于指定需要获取的关联数据
      * @return 用户列表
      */
@@ -120,10 +141,17 @@ public class UserMapper {
                 .execute();
     }
 
+    public List<User> findByEmail(String email, Selection<User> fetcher) {
+        return jSqlClient.createQuery(table)
+                .where(table.email().eq(email))
+                .select(fetcher)
+                .execute();
+    }
+
     /**
      * 根据手机号查询用户列表
      *
-     * @param phone 手机号码
+     * @param phone   手机号码
      * @param fetcher 数据获取器，用于指定需要获取的关联数据
      * @return 用户列表
      */
@@ -134,10 +162,31 @@ public class UserMapper {
                 .execute();
     }
 
+    public List<User> findByPhone(String phone, Selection<User> fetcher) {
+        return jSqlClient.createQuery(table)
+                .where(table.phone().eq(phone))
+                .select(fetcher)
+                .execute();
+    }
+
+    /**
+     * 根据id查询用户列表
+     *
+     * @param id      id号码
+     * @param fetcher 数据获取器，用于指定需要获取的关联数据
+     * @return 用户列表
+     */
     public Collection<User> findById(int id, UserFetcher fetcher) {
         return jSqlClient.createQuery(table)
                 .where(table.id().eq(id))
                 .select(table.fetch(fetcher))
+                .execute();
+    }
+
+    public Collection<User> findById(int id, Selection<User> fetcher) {
+        return jSqlClient.createQuery(table)
+                .where(table.id().eq(id))
+                .select(fetcher)
                 .execute();
     }
 }

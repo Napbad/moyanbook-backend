@@ -44,6 +44,8 @@ public class AddressController {
 
         Page<AddressView> page = addressService.query(addressSpecification);
 
+        log.info("Returning address list with page: {}", page);
+
         return ResponseEntity.ok(
                 Result.success(page)
         );
@@ -56,6 +58,7 @@ public class AddressController {
      * @param address 待添加的地址详情对象
      * @return 添加结果的对象，成功或失败
      */
+    // TODO the condition that part don't exist
     @Api
     @PostMapping("/add")
     public ResponseEntity<Result> add(
@@ -65,6 +68,8 @@ public class AddressController {
         log.info("Received add request with address: {}", address);
 
         Address result = addressService.add(address);
+
+        log.info("Returning add result: {}", result);
 
         return ResponseEntity.ok(
                 Result.success(AddressConstant.ADDRESS_ADD_SUCCESS, result)

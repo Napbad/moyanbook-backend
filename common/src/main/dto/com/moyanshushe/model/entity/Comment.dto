@@ -9,8 +9,6 @@ input CommentForAdd {
     labelId
     parentId
     commentTime
-    likes
-    dislikes
 }
 
 CommentForUpdate {

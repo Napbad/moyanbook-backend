@@ -91,8 +91,7 @@ public interface Admin {
     /**
      * 账户是否已经删除
      */
-    @Nullable
-    Object isDeleted();
+    boolean isDeleted();
 
     /**
      * 更新人id

@@ -20,7 +20,7 @@ import org.babyfish.jimmer.client.meta.Api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Api
+//@Api
 @Slf4j
 @RestController
 @RequestMapping({"/user-info"})
@@ -32,7 +32,7 @@ public class UserInfoController {
     /**
      * 查找用户
      *
-     * @param userSpecification 用户注册信息
+     * @param userSpecification 用户查询信息
      * @return 注册成功返回200和成功消息，失败返回400和错误消息
      */
 //    @Api

@@ -1,7 +1,7 @@
 export com.moyanshushe.model.entity.CommentLike
     -> package com.moyanshushe.model.dto.comment_likes
 
-CommentLikeForAdd {
+input CommentLikeForAdd {
     userId
     commentId
 }
@@ -14,8 +14,8 @@ CommentLikeForDelete {
 specification CommentLikeSpecification {
     userId
     commentId
-    ge(likeDate)
-    le(likeDate)
+    ge(likeTime)
+    le(likeTime)
 
     page: Int?
     pageSize: Int?

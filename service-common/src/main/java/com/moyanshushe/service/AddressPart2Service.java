@@ -1,10 +1,6 @@
 package com.moyanshushe.service;
 
-import com.moyanshushe.model.dto.address_part2.AddressPart2CreateInput;
-import com.moyanshushe.model.dto.address_part2.AddressPart2ForDelete;
-import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
-import com.moyanshushe.model.dto.address_part2.AddressPart2UpdateInput;
-import com.moyanshushe.model.entity.AddressPart2;
+import com.moyanshushe.model.dto.address_part2.*;
 import org.babyfish.jimmer.Page;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,5 +15,5 @@ public interface AddressPart2Service {
 
     void delete(AddressPart2ForDelete forDelete);
 
-    Page<AddressPart2> query(AddressPart2Specification specification);
+    Page<AddressPart2View> query(AddressPart2Specification specification);
 }

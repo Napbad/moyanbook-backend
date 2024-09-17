@@ -36,18 +36,30 @@ input AddressUpdateInput {
     }
 }
 
+specification AddressSpecificationAdmin {
+        id
+        like(address)
+        page: Int?
+        pageSize: Int?
+
+        createPerson {
+            id
+        }
+        updatePerson {
+            id
+        }
+}
+
 specification AddressSpecification {
     id
     like(address)
+
+    addressPart1 {
+        id
+    }
+
     page: Int?
     pageSize: Int?
-
-    createPerson {
-        id
-    }
-    updatePerson {
-        id
-    }
 }
 
 AddressForDelete {

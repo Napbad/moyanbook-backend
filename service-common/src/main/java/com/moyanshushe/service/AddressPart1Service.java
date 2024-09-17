@@ -1,10 +1,6 @@
 package com.moyanshushe.service;
 
-import com.moyanshushe.model.dto.address_part1.AddressPart1CreateInput;
-import com.moyanshushe.model.dto.address_part1.AddressPart1ForDelete;
-import com.moyanshushe.model.dto.address_part1.AddressPart1Specification;
-import com.moyanshushe.model.dto.address_part1.AddressPart1UpdateInput;
-import com.moyanshushe.model.entity.AddressPart1;
+import com.moyanshushe.model.dto.address_part1.*;
 import org.babyfish.jimmer.Page;
 
 /*
@@ -18,5 +14,5 @@ public interface AddressPart1Service {
 
     void delete(AddressPart1ForDelete forDelete);
 
-    Page<AddressPart1> query(AddressPart1Specification specification);
+    Page<AddressPart1View> query(AddressPart1Specification specification);
 }

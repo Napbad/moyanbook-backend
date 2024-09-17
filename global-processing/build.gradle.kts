@@ -7,7 +7,7 @@ plugins {
 group = "com.moyanshushe"
 version = "0.0.1-SNAPSHOT"
 
-val feignCoreVersion = "13.3"
+val feignCoreVersion = "4.1.3"
 val springCloudLoadBalancerVersion = "4.1.3"
 val springVersion = "3.2.5"
 val jimmerVersion = "0.8.104"
@@ -29,6 +29,7 @@ repositories {
 
 dependencies {
     implementation(project(":common"))
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign:$feignCoreVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-web")
 }

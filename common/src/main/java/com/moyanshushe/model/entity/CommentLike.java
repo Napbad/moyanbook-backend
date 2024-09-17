@@ -2,6 +2,7 @@ package com.moyanshushe.model.entity;
 
 import org.babyfish.jimmer.sql.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
 import java.time.LocalDateTime;
@@ -17,9 +18,10 @@ public interface CommentLike {
     int id();
 
     @IdView
-    int userId();
+    Integer userId();
 
     @ManyToOne
+    @Nullable
     User user();
 
     @IdView
@@ -28,6 +30,6 @@ public interface CommentLike {
     @ManyToOne
     Comment comment();
 
-    LocalDateTime likeDate();
+    LocalDateTime likeTime();
 }
 

@@ -1,13 +1,13 @@
 package com.moyanshushe.mapper;
 
 import com.moyanshushe.model.dto.order.*;
-import com.moyanshushe.model.entity.Fetchers;
 import com.moyanshushe.model.entity.Order;
 import com.moyanshushe.model.entity.OrderTable;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.sql.JSqlClient;
 import org.babyfish.jimmer.sql.ast.mutation.DeleteResult;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,10 +28,10 @@ public class OrderMapper {
     }
 
     public SimpleSaveResult<Order> add(OrderForAdd order) {
-        return jsqlClient.save(order);
+        return jsqlClient.insert(order);
     }
 
-    public Page<Order> query(OrderSpecification specification) {
+    public @NotNull Page<OrderView> query(OrderSpecification specification) {
         return jsqlClient.createQuery(table)
                 .where(specification)
                 .orderBy(
@@ -39,29 +39,7 @@ public class OrderMapper {
                 )
                 .select(
                         table.fetch(
-                                Fetchers.ORDER_FETCHER
-                                        .items(
-                                                Fetchers.ITEM_FETCHER
-                                                        .images(
-                                                                Fetchers.ITEM_IMAGE_FETCHER
-                                                                        .imageUrl()
-                                                        )
-                                                        .category(
-                                                                Fetchers.CATEGORY_FETCHER
-                                                                        .name()
-                                                        )
-                                                        .name()
-                                                        .description()
-                                                        .user(
-                                                                Fetchers.USER_FETCHER
-                                                                        .name()
-                                                                        .profileUrl()
-                                                        )
-                                                        .price()
-                                                        .status()
-
-                                        )
-                                        .status()
+                                OrderView.class
                         )
                 )
                 .fetchPage(

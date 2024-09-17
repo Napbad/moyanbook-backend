@@ -1,10 +1,8 @@
 package com.moyanshushe.controller;
 
+import com.moyanshushe.constant.ItemConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.item.ItemForAdd;
-import com.moyanshushe.model.dto.item.ItemForDelete;
-import com.moyanshushe.model.dto.item.ItemForUpdate;
-import com.moyanshushe.model.dto.item.ItemSpecification;
+import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.service.ItemService;
 import com.moyanshushe.utils.AliOssUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 /**
  * ItemController类负责处理所有与书籍管理相关的REST API操作。
@@ -61,9 +61,8 @@ public class ItemController {
                         aliOssUtil::checkUrlIsAliOss
                 );
 
-        itemService.add(itemForAdd);
 
-        return ResponseEntity.ok(Result.success());
+        return ResponseEntity.ok(Result.success(itemService.add(itemForAdd)));
     }
 
     /**
@@ -75,15 +74,14 @@ public class ItemController {
     @Api
     @PostMapping("/update")
     public ResponseEntity<Result> update(@RequestBody ItemForUpdate itemForUpdate) {
-        itemService.update(itemForUpdate);
 
-        itemForUpdate.getImages().stream()
+        Objects.requireNonNull(itemForUpdate.getImages()).stream()
                 .map(ItemForUpdate.TargetOf_images::getImageUrl)
                 .forEach(
                         aliOssUtil::checkUrlIsAliOss
                 );
 
-        return ResponseEntity.ok(Result.success());
+        return ResponseEntity.ok(Result.success(itemService.update(itemForUpdate)));
     }
 
     /**
@@ -97,7 +95,7 @@ public class ItemController {
     public ResponseEntity<Result> delete(@RequestBody ItemForDelete itemForDelete) {
         itemService.delete(itemForDelete);
 
-        return ResponseEntity.ok(Result.success());
+        return ResponseEntity.ok(Result.success(ItemConstant.ITEM_DELETE_SUCCESS));
     }
 
     /**

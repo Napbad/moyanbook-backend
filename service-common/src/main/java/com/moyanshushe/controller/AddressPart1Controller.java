@@ -8,10 +8,7 @@ package com.moyanshushe.controller;
 import com.moyanshushe.constant.AddressConstant;
 import com.moyanshushe.constant.WebIOConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.address_part1.AddressPart1CreateInput;
-import com.moyanshushe.model.dto.address_part1.AddressPart1ForDelete;
-import com.moyanshushe.model.dto.address_part1.AddressPart1Specification;
-import com.moyanshushe.model.dto.address_part1.AddressPart1UpdateInput;
+import com.moyanshushe.model.dto.address_part1.*;
 import com.moyanshushe.model.entity.AddressPart1;
 import com.moyanshushe.service.AddressPart1Service;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +45,7 @@ public class AddressPart1Controller {
 
         log.info("Received read request with specification: {}", specification);
 
-        Page<AddressPart1> page = addressPart1Service.query(specification);
+        Page<AddressPart1View> page = addressPart1Service.query(specification);
 
         return ResponseEntity.ok(Result.success(page));
     }
@@ -61,7 +58,7 @@ public class AddressPart1Controller {
 
         addressPart1Service.update(addressPart1);
 
-        if (addressPart1.getId() == null || addressPart1.getParentAddress() == null) {
+        if (addressPart1.getId() == null || addressPart1.getParentAddressId() == null) {
             return ResponseEntity.badRequest().body(Result.error(WebIOConstant.INPUT_INVALID));
         }
 

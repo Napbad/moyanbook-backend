@@ -29,11 +29,11 @@ create table address
     id               int unsigned auto_increment
         primary key,
     address          varchar(255) default 'cqu'             not null comment '详细地址',
-    address_part1    int unsigned default 0                 not null comment '地址段1',
-    address_part2    int unsigned default 0                 not null comment '地址段2',
-    is_deleted       int unsigned default 0                 not null comment '逻辑删除',
-    create_person_id int unsigned                           not null comment '创建人id',
-    update_person_id int unsigned                           not null comment '更新人id',
+    address_part1    int unsigned default '0'               not null comment '地址段1',
+    address_part2    int unsigned default '0'               not null comment '地址段2',
+    is_deleted       int unsigned default '0'               not null comment '逻辑删除',
+    create_person_id int unsigned default '0'               not null comment '创建人id',
+    update_person_id int unsigned default '0'               not null comment '更新人id',
     create_time      timestamp    default CURRENT_TIMESTAMP not null,
     update_time      timestamp    default CURRENT_TIMESTAMP not null,
     constraint address_address_part1_id_fk
@@ -51,7 +51,7 @@ create table admin
     id               int unsigned auto_increment comment '管理员id，主键'
         primary key,
     name             varchar(20)  default ''          not null comment '管理员名',
-    age              int unsigned default 18          null comment '管理员年龄',
+    age              int unsigned default '18'        null comment '管理员年龄',
     gender           tinyint                          null comment '管理员性别',
     email            varchar(30)  default 'null'      null comment '管理员邮箱',
     phone            varchar(20)                      null comment '管理员手机号',
@@ -61,20 +61,19 @@ create table admin
     update_time      date         default (curdate()) not null comment '管理员更新时间',
     profile_url      varchar(128)                     null comment '头像网址',
     last_login_time  date         default (curdate()) not null comment '上一次登录时间',
-    address_id       int unsigned default 0           null comment '管理员地址对应的id',
+    address_id       int unsigned default '0'         null comment '管理员地址对应的id',
     is_deleted       tinyint(1)   default 0           not null comment '账户是否已经删除',
-    update_person_id int unsigned default 0           not null comment '更新人id',
-    type             int unsigned default 1           not null comment '管理员形式',
-    create_person_id int unsigned default 0           not null
+    update_person_id int unsigned default '0'         not null comment '更新人id',
+    type             int unsigned default '1'         not null comment '管理员形式',
+    create_person_id int unsigned default '0'         not null
 );
 
 create table category
 (
-    id   int unsigned auto_increment comment 'category id，主键'
+    id          int unsigned auto_increment comment 'category id，主键'
         primary key,
-    name varchar(60) default '' not null comment 'category 名',
-    description varchar(255)   default 'default description' not null comment 'category 描述'
-
+    name        varchar(60)  default ''                    not null comment 'category 名',
+    description varchar(255) default 'default description' not null comment 'category 描述'
 );
 
 create table item_code
@@ -105,11 +104,11 @@ create table member
     profile_url         varchar(255)                           not null comment '头像网址',
     address_id          int unsigned                           null comment '地址信息',
     is_deleted          tinyint(1)   default 0                 not null comment '逻辑删除字段',
-    area_responsibility int unsigned default 1                 null comment '负责区域',
+    area_responsibility int unsigned default '1'               null comment '负责区域',
     phone               char(11)                               not null comment '手机号',
     email               varchar(63)                            not null comment '邮箱',
     password            char(64)                               not null comment '密码',
-    create_person_id    int unsigned default 0                 not null comment '创建人',
+    create_person_id    int unsigned default '0'               not null comment '创建人',
     update_person_id    int unsigned                           not null comment '更新人',
     create_time         timestamp    default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time         timestamp    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
@@ -125,11 +124,11 @@ create table member_address_responsibility_mapping
 (
     id               int unsigned auto_increment comment '主键'
         primary key,
-    member_id        int unsigned           not null comment '成员id',
-    address_id       int unsigned           not null comment '管理地区id',
-    is_deleted       int unsigned default 1 not null comment '逻辑删除',
-    create_person_id int unsigned default 1 not null comment '创建人员id',
-    update_person_id int unsigned default 1 not null comment '更新人id',
+    member_id        int unsigned             not null comment '成员id',
+    address_id       int unsigned             not null comment '管理地区id',
+    is_deleted       int unsigned default '1' not null comment '逻辑删除',
+    create_person_id int unsigned default '1' not null comment '创建人员id',
+    update_person_id int unsigned default '1' not null comment '更新人id',
     constraint admin_responsibility_address_mapping_address_id_fk
         foreign key (address_id) references address (id),
     constraint admin_responsibility_address_mapping_admin_id_fk
@@ -140,12 +139,12 @@ create table member_address_responsibility_mapping
 create table member_confirm
 (
     id           int unsigned auto_increment comment '主键',
-    confirm_code char(32)               not null comment '确定码',
-    status       int unsigned           not null comment '状态',
-    operation    int unsigned           not null comment '操作，接收或者送出',
-    member_id    int unsigned           not null comment '对应管理员id',
-    is_deleted   int unsigned default 1 not null comment '逻辑删除',
-    update_time  timestamp              not null on update CURRENT_TIMESTAMP comment '更新时间',
+    confirm_code char(32)                 not null comment '确定码',
+    status       int unsigned             not null comment '状态',
+    operation    int unsigned             not null comment '操作，接收或者送出',
+    member_id    int unsigned             not null comment '对应管理员id',
+    is_deleted   int unsigned default '1' not null comment '逻辑删除',
+    update_time  timestamp                not null on update CURRENT_TIMESTAMP comment '更新时间',
     constraint member_confirm_confirm_code_uindex
         unique (confirm_code),
     constraint member_item_confirm_pk
@@ -159,58 +158,23 @@ create table user
     id               int unsigned auto_increment comment '用户id，主键'
         primary key,
     name             varchar(20)  default ''          not null comment '用户名',
-    age              int unsigned default 18          null comment '用户年龄',
+    age              int unsigned default '18'        null comment '用户年龄',
     gender           tinyint                          null comment '用户性别',
     email            varchar(30)  default 'null'      null comment '用户邮箱',
     phone            varchar(20)                      null comment '用户手机号',
     password         varchar(64)                      not null comment '用户密码',
-    status           tinyint                          null comment '用户状态  0: 正常，1：冻结，2：过期',
+    status           tinyint      default 1           null comment '用户状态  1: 正常，2：冻结，3：过期',
     create_time      date         default (curdate()) not null comment '用户创建时间',
     update_time      date         default (curdate()) not null comment '用户更新时间',
     profile_url      varchar(128)                     null comment '头像网址',
     last_login_time  date         default (curdate()) not null comment '上一次登录时间',
-    address_id       int unsigned default 0           null comment '用户地址对应的id',
+    address_id       int unsigned default '1'         null comment '用户地址对应的id',
     is_deleted       tinyint(1)   default 0           not null comment '账户是否已经删除',
-    update_person_id int unsigned default 0           not null comment '更新人id',
-    type             int unsigned default 1           not null comment '用户形式',
-    create_person_id int unsigned default 0           not null,
+    update_person_id int unsigned default '0'         not null comment '更新人id',
+    type             int unsigned default '1'         not null comment '用户形式',
+    create_person_id int unsigned default '0'         not null,
     constraint user_address_id_fk
         foreign key (address_id) references address (id)
-);
-
-create table coupon
-(
-    id              int unsigned auto_increment comment '优惠券id，主键'
-        primary key,
-    name            varchar(20)  default ''                                 not null comment '优惠券名',
-    price           decimal(10, 2)                                          not null comment '优惠券价格',
-    description     varchar(128) default '这是一个优惠券'                   not null comment '优惠券描述',
-    status          tinyint      default 1                                  not null comment '优惠券状态  0: 正常，1：下架',
-    create_time     datetime     default (curtime())                        not null comment '优惠券创建时间',
-    expiration_time datetime     default ((`create_time` + interval 7 day)) not null comment '优惠券过期时间',
-    user_id         int unsigned                                            not null comment '优惠券所属用户id',
-    constraint coupon_ibfk_1
-        foreign key (user_id) references user (id)
-);
-
-create table item
-(
-    id               int unsigned auto_increment comment '书籍id，主键'
-        primary key,
-    name             varchar(20)  default ''          not null comment '书籍名',
-    price            decimal(10, 2)                   not null comment '书籍价格',
-    description      varchar(128)                     null comment '书籍描述',
-    create_time      date         default (curdate()) not null comment '书籍创建时间',
-    update_time      timestamp    default (curdate()) not null on update CURRENT_TIMESTAMP comment '书籍更新时间',
-    profile_url      varchar(128)                     null comment '书籍图片网址',
-    user_id          int unsigned                     not null comment '书籍所属用户id',
-    update_person_id int unsigned default (`user_id`) not null comment '更新人',
-    amount           int unsigned default 1           not null comment '数量',
-    is_deleted       int unsigned default 0           not null,
-    status           smallint     default 1           not null,
-    category_id      int unsigned                     not null comment '书籍分类id',
-    constraint item_ibfk_1
-        foreign key (user_id) references user (id)
 );
 
 create table comment
@@ -219,27 +183,26 @@ create table comment
         primary key,
     content      text                                   not null,
     commenter_id int unsigned                           not null,
-    item_id      int unsigned                           null,
+    label_id     int unsigned                           null,
     parent_id    int unsigned                           null,
     comment_time timestamp    default CURRENT_TIMESTAMP null,
-    likes        int unsigned default 0                 null,
-    dislikes     int unsigned default 0                 null,
+    likes        int unsigned default '0'               null,
+    dislikes     int unsigned default '0'               null,
     status       tinyint      default 1                 null comment '1 正常，0 隐藏',
     is_deleted   tinyint      default 0                 null comment '逻辑删除, 0 未删除，1 已删除',
     constraint comment_ibfk_1
         foreign key (commenter_id) references user (id),
     constraint comment_ibfk_2
-        foreign key (item_id) references item (id),
+        foreign key (label_id) references label (id),
     constraint comment_ibfk_3
         foreign key (parent_id) references comment (id)
 );
-
 
 create index commenter_id
     on comment (commenter_id);
 
 create index item_id
-    on comment (item_id);
+    on comment (label_id);
 
 create index parent_id
     on comment (parent_id);
@@ -252,7 +215,7 @@ create table comment_history
     content       text                                   not null,
     modified_by   int unsigned                           not null,
     modified_time timestamp    default CURRENT_TIMESTAMP not null,
-    is_deleted    int unsigned default 0                 not null,
+    is_deleted    int unsigned default '0'               not null,
     constraint comment_history_ibfk_1
         foreign key (comment_id) references comment (id),
     constraint comment_history_ibfk_2
@@ -302,6 +265,41 @@ create index comment_id
 
 create index reporter_id
     on comment_report (reporter_id);
+
+create table coupon
+(
+    id              int unsigned auto_increment comment '优惠券id，主键'
+        primary key,
+    name            varchar(20)  default ''                                 not null comment '优惠券名',
+    price           decimal(10, 2)                                          not null comment '优惠券价格',
+    description     varchar(128) default '这是一个优惠券'                   not null comment '优惠券描述',
+    status          tinyint      default 1                                  not null comment '优惠券状态  0: 正常，1：下架',
+    create_time     datetime     default (curtime())                        not null comment '优惠券创建时间',
+    expiration_time datetime     default ((`create_time` + interval 7 day)) not null comment '优惠券过期时间',
+    user_id         int unsigned                                            not null comment '优惠券所属用户id',
+    constraint coupon_ibfk_1
+        foreign key (user_id) references user (id)
+);
+
+create table item
+(
+    id               int unsigned auto_increment comment '书籍id，主键'
+        primary key,
+    name             varchar(20)  default ''          not null comment '书籍名',
+    price            decimal(10, 2)                   not null comment '书籍价格',
+    description      varchar(128)                     null comment '书籍描述',
+    create_time      date         default (curdate()) not null comment '书籍创建时间',
+    update_time      timestamp    default (curdate()) not null on update CURRENT_TIMESTAMP comment '书籍更新时间',
+    profile_url      varchar(128)                     null comment '书籍图片网址',
+    user_id          int unsigned                     not null comment '书籍所属用户id',
+    update_person_id int unsigned default (`user_id`) not null comment '更新人',
+    amount           int unsigned default '1'         not null comment '数量',
+    is_deleted       int unsigned default '0'         not null,
+    status           smallint     default 1           not null,
+    category_id      int unsigned                     not null comment '书籍分类id',
+    constraint item_ibfk_1
+        foreign key (user_id) references user (id)
+);
 
 create index user_id
     on item (user_id);
@@ -367,9 +365,9 @@ create table order_item_mapping
 (
     id          int unsigned auto_increment comment '订单映射id，主键'
         primary key,
-    order_id    char(36)               not null comment '订单id',
-    item_id     int unsigned           not null comment '物品id',
-    item_number int unsigned default 1 not null comment '物品数量',
+    order_id    char(36)                 not null comment '订单id',
+    item_id     int unsigned             not null comment '物品id',
+    item_number int unsigned default '1' not null comment '物品数量',
     constraint order_item_mapping_ibfk_2
         foreign key (item_id) references item (id),
     constraint order_item_mapping_order_detail_order_id_fk
@@ -378,6 +376,8 @@ create table order_item_mapping
 
 create index id_index
     on user (id);
+
+
 
 INSERT INTO address_part2 (name)
 VALUES ('渝北区'),
@@ -480,7 +480,7 @@ INSERT INTO item_code (code_part1, code_part2, item_id)
 VALUES (2, 002, 2);
 
 -- 假设存在用户ID为1, 2, 3和物品ID为101, 102
-INSERT INTO comment (commenter_id, item_id, content,comment_time, parent_id)
+INSERT INTO comment (commenter_id, label_id, content,comment_time, parent_id)
 VALUES
     (1, 1, '这是一个非常好的产品！', NOW() , NULL),
     (2, 1, '我同意，质量超出了我的预期。', NOW() , 1),

@@ -29,7 +29,7 @@ public class AliOssUtil {
     /**
      * 文件上传
      *
-     * @param bytes file
+     * @param bytes      file
      * @param objectName name
      * @return url
      */
@@ -75,9 +75,9 @@ public class AliOssUtil {
 
     public void checkUrlIsAliOss(String url) {
         if (url == null) {
-            throw new FileUploadException("上传失败,文件地址为空");
+            throw new FileUploadException("上传失败,url为空");
         }
-        if (!url.startsWith("https://" + bucketName + "." +endpoint + "/")) {
+        if (!url.startsWith("https://" + bucketName + "." + endpoint + "/")) {
             throw new FileUploadException("上传失败,文件地址不正确");
         }
     }

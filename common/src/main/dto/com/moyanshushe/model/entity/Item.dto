@@ -8,16 +8,44 @@ input unsafe ItemForAdd {
     price
     description
     status
+    amount
 
     images {
         imageUrl
     }
 
-    userId!
-
     category {
         id
     }
+
+    labels {
+        id
+    }
+}
+
+ItemAddView {
+    id
+    name
+    price
+    description
+    status
+    amount
+
+    images {
+        imageUrl
+    }
+
+    category {
+        id
+        name
+    }
+
+    labels {
+        id
+        name
+    }
+
+    createTime
 }
 
 ItemForDelete {
@@ -35,28 +63,50 @@ ItemForConfirm {
     ids: MutableList<Int?>
 }
 
-ItemForUpdate {
+input ItemForUpdate {
+    id
+    dynamic name?
+    dynamic price?
+    dynamic description
+    dynamic status
+
+    dynamic  category? {
+        id
+    }
+
+    dynamic images? {
+        imageUrl
+    }
+
+    dynamic labels? {
+        dynamic id
+    }
+}
+
+ItemUpdateView {
     id
     name
     price
     description
     status
-
-    user {
-        id
-    }
-
-    category {
-        id
-    }
+    amount
 
     images {
         imageUrl
     }
 
-    updatePerson {
+    category {
         id
+        name
     }
+
+    labels {
+        id
+        name
+    }
+
+    createTime
+    updateTime
 }
 
 ItemSubstance {
@@ -88,6 +138,7 @@ ItemSubstance {
         id
     }
     updateTime
+    amount
 }
 
 ItemUpdateStatus {
@@ -97,6 +148,29 @@ ItemUpdateStatus {
     updatePerson {
         id
     }
+}
+
+ItemView {
+    id
+    name
+    price
+    description
+    status
+    amount
+
+    images {
+        imageUrl
+    }
+    category {
+        id
+        name
+    }
+    labels {
+        id
+        name
+    }
+    createTime
+    updateTime
 }
 
 ItemPublicView {
@@ -120,7 +194,7 @@ ItemPublicView {
     }
 }
 
-specification ItemSpecification {
+specification PublicItemSpecification {
     valueIn(id) as ids
     like(name)
     le(price) as maxPrice
@@ -132,8 +206,30 @@ specification ItemSpecification {
         type as userType
     }
 
+    flat(category) {
+        valueIn(id) as labelIds
+    }
+
+    page: Int?
+    pageSize: Int?
+
+    orderByPrice: OrderRule?
+    orderByCreateTime: OrderRule?
+    orderByUpdateTime: OrderRule?
+}
+
+specification ItemSpecification {
+    valueIn(id) as ids
+    like(name)
+    le(price) as maxPrice
+    ge(price) as minPrice
+    status
 
     flat(category) {
+        valueIn(id) as categoryIds
+    }
+
+    flat(labels) {
         valueIn(id) as labelIds
     }
 

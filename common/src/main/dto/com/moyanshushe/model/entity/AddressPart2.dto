@@ -3,14 +3,20 @@ export com.moyanshushe.model.entity.AddressPart2
 
 input AddressPart2CreateInput {
     name
-    parentAddress
+    parentAddressId
 }
 
 input AddressPart2UpdateInput {
     id
     name
-    parentAddress
+    parentAddressId
 }
+
+AddressPart2View {
+    id
+    name
+}
+
 
 AddressPart2ForDelete {
     ids: MutableList<Int?>
@@ -19,7 +25,7 @@ AddressPart2ForDelete {
 specification AddressPart2Specification {
     id
     like(name)
-    eq(parentAddress)
+    eq(parentAddressId)
 
     page: Int?
     pageSize: Int?

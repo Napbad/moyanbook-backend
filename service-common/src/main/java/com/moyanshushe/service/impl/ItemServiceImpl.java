@@ -6,15 +6,16 @@ package com.moyanshushe.service.impl;
  */
 
 import com.moyanshushe.mapper.ItemMapper;
-import com.moyanshushe.model.dto.item.ItemForAdd;
-import com.moyanshushe.model.dto.item.ItemForDelete;
-import com.moyanshushe.model.dto.item.ItemForUpdate;
-import com.moyanshushe.model.dto.item.ItemSpecification;
+import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.model.entity.Item;
 import com.moyanshushe.model.entity.Fetchers;
+import com.moyanshushe.model.entity.ItemDraft;
+import com.moyanshushe.model.entity.ItemTable;
 import com.moyanshushe.service.ItemService;
+import com.moyanshushe.utils.UserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.Page;
+import org.babyfish.jimmer.sql.JSqlClient;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
@@ -25,30 +26,31 @@ import org.springframework.transaction.annotation.Transactional;
 public class ItemServiceImpl implements ItemService {
 
     private final ItemMapper mapper;
+    private final ItemTable table;
+    private final JSqlClient jSqlClient;
 
-    public ItemServiceImpl(ItemMapper mapper) {
+    public ItemServiceImpl(ItemMapper mapper, JSqlClient jSqlClient) {
         this.mapper = mapper;
+        this.jSqlClient = jSqlClient;
+        table = ItemTable.$;
     }
 
     @Override
     @NotNull
     @Transactional(rollbackFor = Exception.class)
-    public Boolean add(ItemForAdd itemForAdd) {
+    public Item add(ItemForAdd itemForAdd) {
         log.info("添加物品: {}", itemForAdd);
 
-        SimpleSaveResult<Item> result = mapper.add(itemForAdd);
+        SimpleSaveResult<Item> result = jSqlClient.insert(
+                ItemDraft.$.produce(itemForAdd.toEntity(), draft -> {
+                    draft.setUserId(UserContext.getUserId());
+                })
+        );
 
-        boolean addSuccess =
-                result.getTotalAffectedRowCount() ==
-                        (1 + itemForAdd.getImages().size() + 1);
+        Item modifiedEntity = result.getModifiedEntity();
 
-        if (addSuccess) {
-            log.info("添加物品成功");
-            return true;
-        } else {
-            log.info("添加物品失败");
-            return false;
-        }
+        log.info("添加物品成功");
+        return modifiedEntity;
     }
 
     @Override
@@ -56,38 +58,50 @@ public class ItemServiceImpl implements ItemService {
     public Boolean delete(ItemForDelete itemForDelete) {
         log.info("删除物品: {}", itemForDelete.getIds());
 
-        Integer delete = mapper.delete(itemForDelete);
+        Integer delete = jSqlClient.createDelete(table)
+                .where(table.id().in(itemForDelete.getIds()))
+                .where(table.userId().eq(itemForDelete.getOperatorId()))
+                .execute();
 
-        log.info("删除物品成功: {}", delete);
+        log.info("删除 {} 个物品成功: {}", delete, itemForDelete.getIds());
         return true;
     }
 
     @Override
     @NotNull
-    public Boolean update(ItemForUpdate itemForUpdate) {
+    public Item update(ItemForUpdate itemForUpdate) {
         log.info("更新物品: {}", itemForUpdate.getId());
 
-        SimpleSaveResult<Item> result = mapper.update(itemForUpdate);
+        SimpleSaveResult<Item> result = jSqlClient.update(
+                ItemDraft.$.produce(
+                        itemForUpdate.toEntity(), draft -> {
+                            draft.setUserId(UserContext.getUserId());
+                        }
+                )
+        );
 
-        int totalAffectedRowCount = result.getTotalAffectedRowCount();
-        if (totalAffectedRowCount > 0) {
-            log.info("更新物品成功");
-
-            log.info("from {} \n to \n {}", result.getOriginalEntity(), result.getModifiedEntity());
-            return true;
-        }
-
-        return false;
+        log.info("更新物品成功");
+        log.info("from {} \n to \n {}", result.getOriginalEntity(), result.getModifiedEntity());
+        return result.getModifiedEntity();
     }
 
     @Override
-    public Page<Item> query(ItemSpecification specification) {
+    public @NotNull Page<ItemView> query(ItemSpecification specification) {
         log.info("查询物品(personal): {}", specification);
-        return mapper.fetch(specification, Fetchers.ITEM_FETCHER.allScalarFields());
+
+        return jSqlClient.createQuery(table)
+                .where(specification)
+                .where(table.userId().eq(UserContext.getUserId()))
+                .select(table.fetch(
+                        ItemView.class
+                )).fetchPage(
+                        specification.getPage() != null ? specification.getPage() : 0,
+                        specification.getPageSize() != null ? specification.getPageSize() : 10
+                );
     }
 
     @Override
-    public Page<Item> queryPublic(ItemSpecification specification) {
+    public Page<Item>   queryPublic(ItemSpecification specification) {
         log.info("查询物品: {}", specification);
         return mapper.fetch(specification,
                 Fetchers.ITEM_FETCHER

@@ -25,7 +25,7 @@ repositories {
 val feignCoreVersion = "13.3"
 val springVersion = "3.2.5"
 val springCloudLoadBalancerVersion = "4.1.3"
-val jimmerVersion = "0.8.147"
+val jimmerVersion = "0.8.170"
 val druidVersion = "1.2.21"
 val jwtVersion = "0.9.1"
 val jaxbVersion = "4.0.2"

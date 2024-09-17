@@ -12,13 +12,15 @@ import com.moyanshushe.mapper.UserMapper;
 import com.moyanshushe.model.dto.user.*;
 import com.moyanshushe.model.entity.Fetchers;
 import com.moyanshushe.model.entity.User;
-import com.moyanshushe.model.entity.UserFetcher;
+import com.moyanshushe.model.entity.UserTable;
 import com.moyanshushe.service.UserService;
 import com.moyanshushe.utils.UserContext;
 import com.moyanshushe.utils.security.AccountUtil;
 import com.moyanshushe.utils.security.SHA256Encryption;
 import com.moyanshushe.utils.verify.CaptchaGenerator;
 import com.moyanshushe.utils.MailUtil;
+import org.babyfish.jimmer.sql.JSqlClient;
+import org.babyfish.jimmer.sql.ast.Selection;
 import org.babyfish.jimmer.sql.ast.mutation.SimpleSaveResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,9 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserMapper userMapper;
+    private final UserTable table;
     private final MailUtil mailUtil;
+    private final JSqlClient jSqlClient;
     private final StringRedisTemplate stringRedisTemplate;
 
     /**
@@ -48,10 +52,12 @@ public class UserServiceImpl implements UserService {
      * @param mailUtil            邮件工具类
      * @param stringRedisTemplate Redis字符串模板
      */
-    public UserServiceImpl(UserMapper userMapper, MailUtil mailUtil, StringRedisTemplate stringRedisTemplate) {
+    public UserServiceImpl(UserMapper userMapper, MailUtil mailUtil, JSqlClient jSqlClient, StringRedisTemplate stringRedisTemplate) {
         this.userMapper = userMapper;
         this.mailUtil = mailUtil;
+        this.jSqlClient = jSqlClient;
         this.stringRedisTemplate = stringRedisTemplate;
+        table = UserTable.$;
     }
 
     /**
@@ -63,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     // TODO 手机注册
     @Transactional(rollbackFor = {Exception.class})
-    public Boolean userRegister(UserForRegister user) {
+    public User userRegister(UserForRegister user) {
         // 验证码校验
         String captcha = this.stringRedisTemplate.opsForValue().get(RedisConstant.USER_CAPTCHA + user.getEmail());
 
@@ -93,9 +99,9 @@ public class UserServiceImpl implements UserService {
             throw new AccountExistsException(AccountConstant.ACCOUNT_EMAIL_EXISTS);
         }
 
-        if (user.getAddress() == null) {
-            user.setStatus((short) 0);
-        }
+//        if (user.getAddress() == null) {
+//            user.setStatus((short) 0);
+//        }
 
         // 密码加密
         user.setPassword(SHA256Encryption.getSHA256(user.getPassword()));
@@ -111,7 +117,7 @@ public class UserServiceImpl implements UserService {
 
             log.info("user registered: {}", id);
 
-            return true;
+            return result.getModifiedEntity();
         }
     }
 
@@ -121,7 +127,7 @@ public class UserServiceImpl implements UserService {
      * @param userForLogin 用户登录信息
      * @return 登录成功返回用户ID，失败返回-1
      */
-    public User userLogin(UserForLogin userForLogin) {
+    public UserLoginView userLogin(UserForLogin userForLogin) {
 
         // 密码格式校验
         if (!AccountUtil.checkPassword(userForLogin.getPassword())) {
@@ -129,74 +135,49 @@ public class UserServiceImpl implements UserService {
         }
 
         // 通过用户名、手机号或邮箱进行登录验证
-        Optional<User> userOptional;
-        UserFetcher fetcher = Fetchers.USER_FETCHER
-                .name(true)
-                .age(true)
-                .gender(true)
-                .email(true)
-                .phone(true)
-                .status(true)
-                .profileUrl(true)
-                .address(
-                        Fetchers.ADDRESS_FETCHER
-                                .address()
-                                .addressPart1(
-                                        Fetchers.ADDRESS_PART1_FETCHER
-                                                .name()
-                                )
-                                .addressPart2(
-                                        Fetchers.ADDRESS_PART2_FETCHER
-                                                .name()
-                                                .parentAddress()
-                                )
-                )
-                .password(true);
+        Optional<UserLoginView> userOptional;
+        Selection<UserLoginView> fetch = table.fetch(UserLoginView.class);
+        String password = userForLogin.getPassword();
+        String passwordDigested = SHA256Encryption.getSHA256(password);
 
         if (userForLogin.getId() != null) {
-            userOptional = this.userMapper.findById(
-                    userForLogin.getId(), fetcher).stream().findFirst();
+            userOptional = jSqlClient.createQuery(table)
+                    .where(table.id().eq(userForLogin.getId()))
+                    .where(table.password().eq(passwordDigested))
+                    .select(fetch).execute().stream().findFirst();
 
         } else if (AccountUtil.checkName(userForLogin.getName())) {
-
-            userOptional = this.userMapper.findByName(
-                    userForLogin.getName(), fetcher).stream().findFirst();
+            userOptional = jSqlClient.createQuery(table)
+                    .where(table.name().eq(userForLogin.getName()))
+                    .where(table.password().eq(passwordDigested))
+                    .select(fetch).execute().stream().findFirst();
 
         } else if (userForLogin.getPhone() != null && AccountUtil.checkPhone(userForLogin.getPhone())) {
-
-            userOptional = this.userMapper.findByPhone(
-                    userForLogin.getPhone(), fetcher).stream().findFirst();
+            userOptional = jSqlClient.createQuery(table)
+                    .where(table.phone().eq(userForLogin.getPhone()))
+                    .where(table.password().eq(passwordDigested))
+                    .select(fetch).execute().stream().findFirst();
 
         } else if (userForLogin.getEmail() != null && AccountUtil.checkEmail(userForLogin.getEmail())) {
-
-            userOptional = this.userMapper.findByEmail(
-                    userForLogin.getEmail(), fetcher).stream().findFirst();
+            userOptional = jSqlClient.createQuery(table)
+                    .where(table.email().eq(userForLogin.getEmail()))
+                    .where(table.password().eq(passwordDigested))
+                    .select(fetch).execute().stream().findFirst();
         } else {
-            throw new InputInvalidException();
+            throw new InputInvalidException("用户名或密码错误");
         }
 
         if (userOptional.isEmpty()) {
             throw new AccountNotFoundException();
 
         } else {
+            // 登录成功，更新登录时间，记录日志
+            this.userMapper.updateLoginTime(userOptional.get().getId(), LocalDate.now());
 
-            // 密码验证
-            String password = userForLogin.getPassword();
-            String passwordDigested = SHA256Encryption.getSHA256(password);
+            log.info("user login: {}", userOptional.get().getId());
 
-            if (passwordDigested.equals(userOptional.get().password())) {
-
-                // 登录成功，更新登录时间，记录日志
-                this.userMapper.updateLoginTime(userOptional.get().id(), LocalDate.now());
-
-                log.info("user login: {}", userOptional.get().id());
-
-                return userOptional.get();
-            } else {
-                return null;
-            }
+            return userOptional.get();
         }
-
     }
 
     /**
@@ -206,13 +187,13 @@ public class UserServiceImpl implements UserService {
      * @return 更新成功返回true，失败返回false
      */
     @Transactional(rollbackFor = {Exception.class})
-    public boolean userUpdate(UserForUpdate userForUpdate) {
+    public User userUpdate(UserForUpdate userForUpdate) {
 
         // 校验用户名
         if (!AccountUtil.checkName(userForUpdate.getName())) {
-            return false;
-        } else if (userForUpdate.getId() == 0L) {
-            return false;
+            throw new AccountNameErrorException();
+        } else if (userForUpdate.getId() != null && userForUpdate.getId() == 0L) {
+            throw new AccountNotFoundException();
         } else {
 
             Integer userId = UserContext.getUserId();
@@ -227,9 +208,9 @@ public class UserServiceImpl implements UserService {
                 log.info("update user: {}", userId);
                 log.info("details: {} -> {}", result.getOriginalEntity(), result.getModifiedEntity());
 
-                return true;
+                return result.getModifiedEntity();
             } else {
-                return false;
+                return null;
             }
         }
     }
@@ -243,7 +224,10 @@ public class UserServiceImpl implements UserService {
 
         // 生成验证码并设置过期时间
         String captcha = CaptchaGenerator.generateCaptcha();
-        this.stringRedisTemplate.opsForValue().set(RedisConstant.USER_CAPTCHA + userForVerify.getEmail(), captcha, 20L, TimeUnit.MINUTES);
+        this.stringRedisTemplate.opsForValue()
+                        .set(RedisConstant.USER_CAPTCHA + userForVerify.getEmail(),
+                                captcha,
+                                10L, TimeUnit.MINUTES);
         // 发送验证码到邮箱
         this.mailUtil.sendCaptcha(captcha, userForVerify.getEmail());
 
@@ -285,11 +269,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updatePassword(UserForUpdatePassword userForUpdatePassword) {
-        Integer id = UserContext.getUserId();
-        if (id == null || !id.equals(userForUpdatePassword.getId())) {
-            throw new UserNotLoginException();
-        }
-
 
         String captcha = stringRedisTemplate.opsForValue().get(RedisConstant.USER_CAPTCHA + userForUpdatePassword.getEmail());
         if (captcha == null) {
@@ -298,23 +277,21 @@ public class UserServiceImpl implements UserService {
             throw new CaptchaErrorException(VerifyConstant.CAPTCHA_ERROR);
         }
 
-        if (!AccountUtil.checkPassword(userForUpdatePassword.getPassword())) {
+        if (!AccountUtil.checkPassword(userForUpdatePassword.getNewPassword())) {
             throw new AccountPasswordErrorException();
         }
-        Collection<User> users = userMapper.findById(userForUpdatePassword.getId(), Fetchers.USER_FETCHER.password());
+
+        Collection<User> users = userMapper.findByEmail(userForUpdatePassword.getEmail(), Fetchers.USER_FETCHER.password());
         if (users != null && users.isEmpty()) {
             throw new AccountNotFoundException();
-        } else if (users.size() > 1) {
-            throw new DBException();
         }
 
-
-        if (AccountUtil.checkPassword(userForUpdatePassword.getPassword())) {
-            // 密码加密
-            userForUpdatePassword.setPassword(SHA256Encryption.getSHA256(userForUpdatePassword.getPassword()));
-            // 更新密码
-            this.userMapper.update(userForUpdatePassword.toEntity());
-            // 记录日志
+        if (AccountUtil.checkPassword(userForUpdatePassword.getNewPassword())) {
+            userForUpdatePassword.setNewPassword(SHA256Encryption.getSHA256(userForUpdatePassword.getNewPassword()));
+            jSqlClient.createUpdate(table)
+                    .set(table.password(), userForUpdatePassword.getNewPassword())
+                            .where(table.email().eq(userForUpdatePassword.getEmail()))
+                                    .execute();
             log.info("user: {} update password", userForUpdatePassword.getId());
             return true;
         }

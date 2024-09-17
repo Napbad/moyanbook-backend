@@ -3,13 +3,22 @@ export com.moyanshushe.model.entity.AddressPart1
 
 input AddressPart1CreateInput {
     name
-    parentAddress
+    parentAddressId
+}
+
+AddressPart1View {
+    id
+    name
+    parentAddress {
+        id
+        name
+    }
 }
 
 input AddressPart1UpdateInput {
     id
     name
-    parentAddress
+    parentAddressId
 }
 
 AddressPart1ForDelete {
@@ -19,7 +28,7 @@ AddressPart1ForDelete {
 specification AddressPart1Specification {
     id
     like(name)
-    eq(parentAddress)
+    eq(parentAddressId      )
 
     page: Int?
     pageSize: Int?

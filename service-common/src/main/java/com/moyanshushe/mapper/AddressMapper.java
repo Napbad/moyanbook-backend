@@ -32,7 +32,7 @@ public class AddressMapper {
 
 
     public SimpleSaveResult<Address> add(Address entity) {
-        return jsqlClient.getEntities().save(entity);
+        return jsqlClient.insert(entity);
     }
 
     public Optional<AddressView> queryOneByAddress(AddressCreateInput address) {

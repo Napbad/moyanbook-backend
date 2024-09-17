@@ -2,6 +2,7 @@ package com.moyanshushe.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.babyfish.jimmer.sql.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -34,6 +35,9 @@ public interface Address extends BaseEntity {
     @JoinColumn(name = "address_part2")
     AddressPart2 addressPart2();
 
+    @Nullable
+    @OneToOne(mappedBy = "address")
+    User user();
 
     @Default("0")
     @LogicalDeleted(

@@ -1,9 +1,6 @@
 package com.moyanshushe.service;
 
-import com.moyanshushe.model.dto.order.OrderForAdd;
-import com.moyanshushe.model.dto.order.OrderForDelete;
-import com.moyanshushe.model.dto.order.OrderForUpdate;
-import com.moyanshushe.model.dto.order.OrderSpecification;
+import com.moyanshushe.model.dto.order.*;
 import com.moyanshushe.model.entity.Order;
 import org.babyfish.jimmer.Page;
 import org.jetbrains.annotations.NotNull;
@@ -15,14 +12,13 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface OrderService {
     @NotNull
-    Boolean add(OrderForAdd order);
+    Order add(OrderForAdd order);
 
     @NotNull
-    Page<Order> query(OrderSpecification specification);
+    Page<OrderView> query(OrderSpecification specification);
 
     @NotNull
     Boolean update(OrderForUpdate orderForUpdate);
 
-    @NotNull
-    Boolean delete(OrderForDelete orderForDelete);
+    void delete(OrderForDelete orderForDelete);
 }

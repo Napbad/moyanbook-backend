@@ -7,10 +7,7 @@ package com.moyanshushe.controller;
 
 import com.moyanshushe.constant.OrderConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.order.OrderForAdd;
-import com.moyanshushe.model.dto.order.OrderForDelete;
-import com.moyanshushe.model.dto.order.OrderForUpdate;
-import com.moyanshushe.model.dto.order.OrderSpecification;
+import com.moyanshushe.model.dto.order.*;
 import com.moyanshushe.model.entity.Order;
 import com.moyanshushe.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,17 +35,16 @@ public class OrderController {
     public ResponseEntity<Result> add(
             @RequestBody OrderForAdd order) {
 
-        Boolean result = service.add(order);
+        Order result = service.add(order);
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result) ? Result.success(OrderConstant.ORDER_ADD_SUCCESS)
-                        : Result.error(OrderConstant.ORDER_ADD_FAIL));
+                Result.success(OrderConstant.ORDER_ADD_SUCCESS));
     }
 
     @Api
     @PostMapping("/query")
     public ResponseEntity<Result> queryOrder(
             @RequestBody OrderSpecification specification) {
-        Page<Order> result = service.query(specification);
+        Page<OrderView> result = service.query(specification);
 
         return ResponseEntity.ok(Result.success(result));
     }
@@ -70,10 +66,9 @@ public class OrderController {
     public ResponseEntity<Result> deleteOrder(
             @RequestBody OrderForDelete orderForDelete) {
 
-        Boolean result = service.delete(orderForDelete);
+        service.delete(orderForDelete);
 
         return ResponseEntity.ok(
-                Boolean.TRUE.equals(result) ? Result.success(OrderConstant.ORDER_DELETE_SUCCESS)
-                        : Result.error(OrderConstant.ORDER_DELETE_FAIL));
+                Result.success(OrderConstant.ORDER_DELETE_SUCCESS));
     }
 }

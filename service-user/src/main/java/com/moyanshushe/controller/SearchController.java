@@ -68,7 +68,7 @@ public class SearchController {
     @PostMapping("/item")
     public ResponseEntity<Result> searchItem(@RequestBody ItemSpecification specification) {
 
-        return commonServiceClient.fetchPublicItems(specification);
+        return commonServiceClient.queryPublicItems(specification);
     }
 
     /**

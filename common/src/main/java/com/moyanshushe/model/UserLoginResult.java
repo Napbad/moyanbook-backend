@@ -9,6 +9,7 @@ package com.moyanshushe.model;
 
 */
 
+import com.moyanshushe.model.dto.user.UserLoginView;
 import com.moyanshushe.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +17,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserLoginResult {
-    private User user;
+    private UserLoginView user;
     private String token;
 }

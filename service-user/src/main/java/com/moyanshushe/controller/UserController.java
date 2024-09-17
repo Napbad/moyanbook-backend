@@ -28,6 +28,7 @@ import com.moyanshushe.service.UserService;
 import com.moyanshushe.utils.AliOssUtil;
 import com.moyanshushe.utils.UserContext;
 import com.moyanshushe.utils.JwtUtil;
+import com.moyanshushe.utils.security.AccountUtil;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.client.meta.Api;
 import org.babyfish.jimmer.sql.ast.tuple.Tuple2;
@@ -74,18 +75,6 @@ public class UserController {
      * 注册用户
      *
      * @param userForRegister 用户注册信息
-     *                        UserForRegister {
-     *                        id
-     *                        name!
-     *                        email!
-     *                        password!
-     *                        captcha: String!
-     *                        address {
-     *                        id
-     *                        }
-     *                        status  1 -> normal(default)  2 -> unsafe  3 ->  freeze
-     *                        type    1 -> normal(students)  2 -> store
-     *                        }
      * @return 注册成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
@@ -93,44 +82,54 @@ public class UserController {
     public ResponseEntity<Result> registerUser(@RequestBody UserForRegister userForRegister) {
         log.info("user register: {}", userForRegister);
 
-        boolean success = this.userService.userRegister(userForRegister);
+        User user = this.userService.userRegister(userForRegister);
 
-        return success ?
-                ResponseEntity.ok(Result.success(AccountConstant.ACCOUNT_REGISTER_SUCCESS))
-                : ResponseEntity.badRequest().body(Result.error(AccountConstant.ACCOUNT_REGISTER_FAILURE));
+        UserRegisterReturnView view = new UserRegisterReturnView(user);
+
+        return ResponseEntity.ok(Result.success(
+                AccountConstant.ACCOUNT_REGISTER_SUCCESS,
+                view));
     }
 
     /**
      * 用户登录
      *
      * @param userForLogin 用户登录信息
-     *                     input UserForLogin {
-     *                     id  --- choose one
-     *                     name  ---
-     *                     phone  ---
-     *                     email  ---
-     *                     password !
-     *                     }
      * @return 登录成功返回200，用户信息和包含JWT的成功消息，失败返回401和错误消息
      */
     @Api
     @PostMapping({"/login"})
     public ResponseEntity<Result> loginUser(@RequestBody UserForLogin userForLogin) {
 
-        if ((userForLogin.getEmail() == null
-                && userForLogin.getPhone() == null
-                && userForLogin.getName() == null
-                && userForLogin.getId() == null)) {
-            throw new InputInvalidException();
+        int count = 0;
+
+        if (AccountUtil.checkEmail(userForLogin.getEmail())) {
+            count++;
+        }
+
+        if (AccountUtil.checkPhone(userForLogin.getPhone())) {
+            count++;
+        }
+
+        if (AccountUtil.checkName(userForLogin.getName())) {
+            count++;
+        }
+
+        if (userForLogin.getId() != null) {
+            count++;
+        }
+
+        if (count != 1) {
+            throw new InputInvalidException("only one login way is supported in one time");
         }
 
         log.info("user login: id: {}, name: {}, email: {}, phone: {}"
                 , userForLogin.getId(), userForLogin.getName(), userForLogin.getEmail(), userForLogin.getPhone());
 
-        User user = this.userService.userLogin(userForLogin);
+        UserLoginView user = this.userService.userLogin(userForLogin);
         if (user != null) {
             HashMap<String, Object> map = new HashMap<>();
-            map.put(JwtClaimsConstant.ID, user.id());
+            map.put(JwtClaimsConstant.ID, user.getId());
             String jwt = JwtUtil.createJWT(this.jwtProperties.getSecretKey(), this.jwtProperties.getTtl(), map);
 
             return ResponseEntity.ok(Result.success(new UserLoginResult(
@@ -146,16 +145,6 @@ public class UserController {
      * 更新用户信息
      *
      * @param userForUpdate 用户更新信息
-     *                      UserForUpdate {
-     *                      id!
-     *                      name (all below are optional)
-     *                      gender
-     *                      age
-     *                      profileUrl
-     *                      address {
-     *                      id
-     *                      }
-     *                      }
      * @return 更新成功返回200和成功消息，失败返回400和错误消息
      */
     @Api
@@ -164,27 +153,21 @@ public class UserController {
         log.info("user update: {}", userForUpdate.getId());
         aliOssUtil.checkUrlIsAliOss(userForUpdate.getProfileUrl());
 
-        boolean isChanged = this.userService.userUpdate(userForUpdate);
+        User update = this.userService.userUpdate(userForUpdate);
 
-        return isChanged
-                ? ResponseEntity.ok(Result.success(AccountConstant.ACCOUNT_CHANGE_SUCCESS))
-                : ResponseEntity.badRequest().body(Result.error(AccountConstant.ACCOUNT_CHANGE_FAILURE));
+        return
+                 ResponseEntity.ok(Result.success(AccountConstant.ACCOUNT_CHANGE_SUCCESS,
+                         new UserUpdateView(update)));
     }
 
     /**
-     * @param userForUpdatePassword UserForUpdatePassword {
-     *                              id!
-     *                              password!
-     *                              email!
-     *                              newPassword: String!
-     *                              captcha: String!
-     *                              }
+     * @param userForUpdatePassword UserForUpdatePassword
      * @return 更改成功返回200和成功消息，失败返回错误消息
      */
     @Api
     @PostMapping({"/change-password"})
     public ResponseEntity<Result> changePassword(@RequestBody UserForUpdatePassword userForUpdatePassword) {
-        log.info("user change password: {}", userForUpdatePassword.getId());
+        log.info("user change password: {}, {}", userForUpdatePassword.getId(), userForUpdatePassword.getEmail());
 
         boolean isUpdated = this.userService.updatePassword(userForUpdatePassword);
 
@@ -205,7 +188,7 @@ public class UserController {
      *                       }
      * @return 绑定成功返回200和成功消息，失败返回400和错误消息
      */
-    @Api
+//    @Api
     @PostMapping({"/bind"})
     public ResponseEntity<Result> bind(@RequestBody UserForBinding userForBinding) {
 
@@ -235,17 +218,24 @@ public class UserController {
      * 验证用户信息
      *
      * @param userForVerify 用户验证信息
-     *                      <p>
-     *                      UserForVerify {
-     *                      id
-     *                      phone --- choose one
-     *                      email ---
-     *                      }
      * @return 验证成功返回200和成功消息
      */
     @Api
     @PostMapping({"/verify"})
     public ResponseEntity<Result> verify(@RequestBody UserForVerify userForVerify) {
+        int count = 0;
+
+        if (AccountUtil.checkEmail(userForVerify.getEmail())) {
+           count++;
+        }
+        if (AccountUtil.checkPhone(userForVerify.getPhone())) {
+            count++;
+        }
+
+        if (count != 1){
+            throw new InputInvalidException("only one can be sent captcha to.");
+        }
+
         log.info("user verify: {}", userForVerify);
         this.userService.userVerify(userForVerify);
         return ResponseEntity.ok().body(Result.success(VerifyConstant.VERIFY_CODE_SENT));
@@ -258,19 +248,9 @@ public class UserController {
      * @return 返回物品查询结果
      */
     @Api
-    @PostMapping("/item/fetch")
+    @PostMapping("/item/query")
     public ResponseEntity<Result> fetchItem(@RequestBody ItemSpecification specification) {
-
-        if (specification.getUserIds() == null
-                || specification.getUserIds().size() != 1
-                || !((ArrayList<?>) specification.getUserIds()).getFirst().equals(UserContext.getUserId())
-        ) {
-            throw new InputInvalidException();
-        }
-
-        specification.setUserIds(new ArrayList<>(Collections.singletonList(UserContext.getUserId())));
-
-        return commonServiceClient.fetchItems(specification);
+        return commonServiceClient.queryItems(specification);
     }
 
     /**
@@ -286,11 +266,6 @@ public class UserController {
         if (UserContext.getUserId() == null) {
             throw new NoAuthorityException();
         }
-        if (!UserContext.getUserId().equals(itemForAdd.getUserId())) {
-            throw new InputInvalidException();
-        }
-
-        itemForAdd.setUserId(UserContext.getUserId());
 
         return commonServiceClient.addItem(itemForAdd);
     }
@@ -304,13 +279,6 @@ public class UserController {
     @Api
     @PostMapping("/item/update")
     public ResponseEntity<Result> updateItem(@RequestBody ItemForUpdate itemForUpdate) {
-        if (itemForUpdate.getUser() == null) {
-            return ResponseEntity.badRequest().body(Result.error(WebIOConstant.INPUT_INVALID));
-        }
-        if (itemForUpdate.getUser().getId() == 0) {
-            throw new InputInvalidException();
-        }
-
         return commonServiceClient.updateItem(itemForUpdate);
     }
 
@@ -365,19 +333,19 @@ public class UserController {
     }
 
     @Api
-    @PostMapping("address/add")
+    @PostMapping("/address/add")
     public ResponseEntity<Result> addAddress(@RequestBody AddressCreateInput addressForQuery) {
         return commonServiceClient.addAddress(addressForQuery);
     }
 
     @Api
-    @PostMapping("address-part1/query")
+    @PostMapping("/address-part1/query")
     public ResponseEntity<Result> getAddressPart1(@RequestBody AddressPart1Specification specification) {
         return commonServiceClient.queryAddressPart1(specification);
     }
 
     @Api
-    @PostMapping("address-part2/query")
+    @PostMapping("/address-part2/query")
     public ResponseEntity<Result> getAddressPart2(@RequestBody AddressPart2Specification specification) {
         return commonServiceClient.readAddressPart2(specification);
     }
@@ -447,7 +415,6 @@ public class UserController {
     @PostMapping("/order/delete")
     public ResponseEntity<Result> deleteOrder(@RequestBody OrderForDelete itemForDelete) {
         if (!Objects.equals(itemForDelete.getUserId(), UserContext.getUserId())) {
-
             throw new NoAuthorityException();
         }
 

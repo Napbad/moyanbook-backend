@@ -52,7 +52,7 @@ import java.util.concurrent.CompletableFuture;
 public interface CommonServiceClient {
 
     @PostMapping("/item/query")
-    ResponseEntity<Result> fetchItems(@RequestBody ItemSpecification specification);
+    ResponseEntity<Result> queryItems(@RequestBody ItemSpecification specification);
 
     @PostMapping("/item/add")
     ResponseEntity<Result> addItem(@RequestBody ItemForAdd item);
@@ -64,7 +64,7 @@ public interface CommonServiceClient {
     ResponseEntity<Result> deleteItems(@RequestBody ItemForDelete item);
 
     @PostMapping("/item/query-public")
-    ResponseEntity<Result> fetchPublicItems(@RequestBody ItemSpecification specification);
+    ResponseEntity<Result> queryPublicItems(@RequestBody ItemSpecification specification);
 
     @PostMapping("address/add")
     ResponseEntity<Result> add(@RequestBody AddressCreateInput addressSubstance);
@@ -93,7 +93,7 @@ public interface CommonServiceClient {
     @PostMapping("category/delete")
     ResponseEntity<Result> deleteCategory(@RequestBody CategoryForDelete category);
 
-    @PostMapping("/order/fetch")
+    @PostMapping("/order/query")
     ResponseEntity<Result> queryOrder(@RequestBody OrderSpecification specification);
 
     @PostMapping("/order/add")

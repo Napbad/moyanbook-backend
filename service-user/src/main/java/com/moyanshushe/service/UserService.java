@@ -13,17 +13,17 @@ public interface UserService {
     @Transactional(
             rollbackFor = {Exception.class}
     )
-    Boolean userRegister(UserForRegister userForRegister);
+    User userRegister(UserForRegister userForRegister);
 
     @Transactional(
             rollbackFor = {Exception.class}
     )
-    User userLogin(UserForLogin userForLogin);
+    UserLoginView userLogin(UserForLogin userForLogin);
 
     @Transactional(
             rollbackFor = {Exception.class}
     )
-    boolean userUpdate(UserForUpdate userForUpdate);
+    User userUpdate(UserForUpdate userForUpdate);
 
     void userVerify(UserForVerify userForVerify);
 

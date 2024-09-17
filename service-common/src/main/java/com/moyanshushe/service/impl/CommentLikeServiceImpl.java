@@ -20,6 +20,8 @@ import org.babyfish.jimmer.sql.JSqlClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class CommentLikeServiceImpl implements CommentLikeService {
 
@@ -54,9 +56,20 @@ public class CommentLikeServiceImpl implements CommentLikeService {
     @Override
     @Transactional
     public void delete(CommentLikeForDelete commentLike) {
-        jSqlClient.deleteById(CommentLike.class, commentLike.getCommentId());
-
         Comment first = queryOneComment(commentLike.getCommentId());
+
+        List<CommentLike> commentLikeList = jSqlClient.createQuery(table)
+                .where(
+                        table.commentId().eq(commentLike.getCommentId()),
+                        table.userId().eq(commentLike.getUserId())
+                ).select(
+                        table.fetch(Fetchers.COMMENT_LIKE_FETCHER.user())
+                ).execute();
+        if (commentLikeList.isEmpty()) {
+            throw new DBException();
+        }
+
+        jSqlClient.deleteById(CommentLike.class, commentLikeList.getFirst().id());
         jSqlClient.save(
                 Objects.createComment(
                         draft -> {

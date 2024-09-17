@@ -8,6 +8,7 @@ package com.moyanshushe.exception;
 public class AddressExistsException extends BaseException {
 
     public AddressExistsException() {
+        super("Address exists");
     }
 
     public AddressExistsException(String msg) {

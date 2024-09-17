@@ -5,13 +5,13 @@ package com.moyanshushe.exception;
  * Version: 1.0
  * 账号被锁定异常
  */
-public class AccountLockedException extends BaseException {
+public class OrderExistsException extends BaseException {
 
-    public AccountLockedException() {
+    public OrderExistsException() {
         super();
     }
 
-    public AccountLockedException(String msg) {
+    public OrderExistsException(String msg) {
         super(msg);
     }
 

@@ -1,6 +1,7 @@
 package com.moyanshushe.model.entity;
 
 import org.babyfish.jimmer.sql.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -25,7 +26,12 @@ public interface AddressPart1 {
     /**
      * 隶属于的地址
      */
-    Integer parentAddress();
+    @IdView
+    Integer parentAddressId();
+
+    @Nullable
+    @ManyToOne
+    AddressPart2 parentAddress();
 
     @OneToMany(mappedBy = "addressPart1")
     List<Address> address();

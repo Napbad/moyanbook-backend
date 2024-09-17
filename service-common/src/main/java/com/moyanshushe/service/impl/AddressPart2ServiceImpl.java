@@ -1,9 +1,6 @@
 package com.moyanshushe.service.impl;
 
-import com.moyanshushe.model.dto.address_part2.AddressPart2CreateInput;
-import com.moyanshushe.model.dto.address_part2.AddressPart2ForDelete;
-import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
-import com.moyanshushe.model.dto.address_part2.AddressPart2UpdateInput;
+import com.moyanshushe.model.dto.address_part2.*;
 import com.moyanshushe.model.entity.AddressPart2;
 import com.moyanshushe.model.entity.AddressPart2Table;
 import com.moyanshushe.service.AddressPart2Service;
@@ -47,11 +44,11 @@ public class AddressPart2ServiceImpl implements AddressPart2Service {
     }
 
     @Override
-    public Page<AddressPart2> query(AddressPart2Specification specification) {
+    public Page<AddressPart2View> query(AddressPart2Specification specification) {
 
         return jsqlClient.createQuery(table)
                 .where(specification)
-                .select(table)
+                .select(table.fetch(AddressPart2View.class))
                 .fetchPage(
                         specification.getPage() == null ? 0 : specification.getPage(),
                         specification.getPageSize() == null ? 10 : specification.getPageSize()

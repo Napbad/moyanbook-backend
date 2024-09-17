@@ -103,20 +103,6 @@ moyanshushe:
     secret: ${moyan.key.secret}
 
   jwt:
-    # 管理员接口JWT签名密钥
-    member-secret-key: ${moyan.jwt.member-secret-key}
-    # 管理员接口JWT有效期
-    member-ttl: ${moyan.jwt.member-ttl}
-    # 管理员接口请求头中JWT的字段名
-    member-token-name: ${moyan.jwt.member-token-name}
-    #
-
-    # 用户接口JWT签名密钥
-    user-secret-key: ${moyan.jwt.user-secret-key}
-    # 用户接口JWT有效期
-    user-ttl: ${moyan.jwt.user-ttl}
-    # 用户接口请求头中JWT的字段名
-    user-token-name: ${moyan.jwt.user-token-name}
     member-check: true
     user-check: true
   alioss:

@@ -34,8 +34,7 @@ public interface Item extends BaseEntityWithOnlyUpdate {
     /**
      * 书籍价格
      */
-    @Nullable
-    Double price();
+    double price();
 
     /**
      * 书籍描述
@@ -44,7 +43,7 @@ public interface Item extends BaseEntityWithOnlyUpdate {
     String description();
 
     /**
-     * 书籍状态  0: 正常，1：下架
+     * 书籍状态  1: 正常，0            ：下架
      */
     Short status();
 

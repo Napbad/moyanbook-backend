@@ -39,13 +39,13 @@ public class UserContextInterceptor implements HandlerInterceptor {
 
         log.info("header: {}  value {} ", AuthorityConstant.USER_AUTHENTICATION_ID, header);
 
-//        if (!StringUtils.hasLength(header)) {
-//            return false;
-//        }
+        if (!StringUtils.hasLength(header)) {
+            return false;
+        }
 
-//        UserContext.setUserId(Integer.valueOf(header));
+        UserContext.setUserId(Integer.valueOf(header));
 
-        UserContext.setUserId(7);
+//        UserContext.setUserId(7);
 
         return true;
     }

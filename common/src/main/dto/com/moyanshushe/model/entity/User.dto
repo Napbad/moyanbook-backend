@@ -7,15 +7,10 @@ input UserForVerify {
 }
 
 input UserForRegister {
-    id
     name
     email
     password
     captcha: String
-    address {
-        id
-    }
-    status
     type
 }
 
@@ -27,20 +22,95 @@ input UserForLogin {
     password
 }
 
-UserForUpdate {
+UserRegisterReturnView {
     id
     name
     gender
     age
-    profileUrl
+    type
+    status
+    email
     address {
         id
+        address
+        addressPart1 {
+            id
+            name
+        }
+        addressPart2 {
+            id
+            name
+        }
+    }
+}
+
+UserLoginView {
+    id
+    name
+    age
+    gender
+    email
+    phone
+    status
+    type
+    profileUrl
+    address{
+        id
+        address
+        addressPart1{
+            id
+            name
+        }
+        addressPart2{
+            id
+            name
+        }
+    }
+}
+
+input UserForUpdate {
+    id
+    dynamic name?
+    dynamic gender
+    dynamic age
+    dynamic profileUrl
+    dynamic address {
+        address
+        addressPart1{
+            id
+        }
+        addressPart2{
+            id
+        }
+    }
+}
+
+UserUpdateView {
+    id
+    name
+    age
+    gender
+    email
+    phone
+    status
+    type
+    profileUrl
+    address{
+        id
+        address
+        addressPart1{
+            id
+            name
+        }
+        addressPart2{
+            id
+            name
+        }
     }
 }
 
 UserForUpdatePassword {
     id
-    password
     email
     newPassword: String
     captcha: String

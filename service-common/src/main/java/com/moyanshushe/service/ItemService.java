@@ -1,24 +1,22 @@
 package com.moyanshushe.service;
 
-import com.moyanshushe.model.dto.item.ItemForAdd;
-import com.moyanshushe.model.dto.item.ItemForDelete;
-import com.moyanshushe.model.dto.item.ItemForUpdate;
-import com.moyanshushe.model.dto.item.ItemSpecification;
+import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.model.entity.Item;
 import org.babyfish.jimmer.Page;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * Author: Napbad
  * Version: 1.0
  */
 public interface ItemService {
-    Boolean add(ItemForAdd itemForAdd);
+    Item add(ItemForAdd itemForAdd);
 
     Boolean delete(ItemForDelete itemForDelete);
 
-    Boolean update(ItemForUpdate itemForUpdate);
+    Item update(ItemForUpdate itemForUpdate);
 
-    Page<Item> query(ItemSpecification specification);
+    @NotNull Page<ItemView> query(ItemSpecification specification);
 
     Page<Item> queryPublic(ItemSpecification specification);
 }

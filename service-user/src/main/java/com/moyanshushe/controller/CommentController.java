@@ -61,9 +61,6 @@ public class CommentController {
             throw new NoAuthorityException();
         }
 
-        comment.setLikes(0);
-        comment.setDislikes(0);
-
         return commonServiceClient.addComment(comment);
     }
 

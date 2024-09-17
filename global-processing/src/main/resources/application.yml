@@ -1,7 +1,7 @@
 # 配置Spring数据源
 spring:
   profiles:
-    include: dev
+    include: live
   datasource:
     # MySQL驱动类名
     driver-class-name: ${moyan.datasource.driver-class-name}
