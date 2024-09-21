@@ -10,6 +10,7 @@ package com.moyanshushe.controller;
 import com.moyanshushe.client.CommonServiceClient;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.dto.item.ItemSpecification;
+import com.moyanshushe.model.dto.item.PublicItemSpecification;
 import com.moyanshushe.model.dto.member.PublicMemberSpecification;
 import com.moyanshushe.model.dto.user.PublicUserSpecification;
 import com.moyanshushe.model.entity.Member;
@@ -66,7 +67,7 @@ public class SearchController {
      */
     @Api
     @PostMapping("/item")
-    public ResponseEntity<Result> searchItem(@RequestBody ItemSpecification specification) {
+    public ResponseEntity<Result> searchItem(@RequestBody PublicItemSpecification specification) {
 
         return commonServiceClient.queryPublicItems(specification);
     }

@@ -1008,12 +1008,82 @@ status:
 
 搜索商品
 
+status: normal = 1;
+        unsafe = 2;
+        freeze = 3;
+
+type:   normal = 1;
+        store  = 2;
+
 输入：
 ```json
-
+{
+    "ids": [],
+    "name": "",
+    "maxPrice": 0,
+    "minPrice": 2147483647,
+    "status": 0,
+    "userIds": [],
+    "userType": 0,
+    "categoryIds": [],
+    "page": 0,
+    "pageSize": 10,
+    "orderByPrice": "ASC",
+    "orderByCreateTime": "DESC",
+    "orderByUpdateTime": "ASC   "
+}
 ```
 
 输出：
 ```json
+{
+    "id": null,
+    "name": null,
+    "price": null,
+    "description": null,
+    "status": null,
+    "images": [
+        {
+            "imageUrl": null
+        }
+    ],
+    "user": {
+        "id": 0     ,
+        "name": null
+    },
+    "category": {
+        "id": 0,
+        "name": null
+    }   
+}
+```
+
+### search user (search/user)
+
+搜索用户
+
+输入：
+```json
+{
+    "id": null,
+    "name": null,
+    "type": null,
+    "email": null,
+    "phone": null,
+    "page": null,
+    "pageSize": null
+}
+```
+
+输出：
+```json
+{
+    "id": 0,
+    "name": "",
+    "gender": "",
+    "status": "",
+    "profileUrl": "",
+    "type": ""
+}
 ```
 

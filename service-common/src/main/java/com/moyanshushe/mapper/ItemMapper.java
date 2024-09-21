@@ -83,4 +83,36 @@ public class ItemMapper {
                         specification.getPageSize() != null ? specification.getPageSize() : 10
                 );
     }
+
+    public @NotNull Page<ItemPublicView> queryPublic(PublicItemSpecification specification) {
+        log.info("查询物品: {}", specification);
+        return jsqlClient.createQuery(table)
+                .where(specification)
+                .orderByIf(
+                        specification.getOrderByCreateTime() != null,
+                        specification.getOrderByCreateTime() == OrderRule.ASC ?
+                                table.createTime().asc() :
+                                table.createTime().desc()
+                )
+                .orderByIf(
+                        specification.getOrderByUpdateTime() != null,
+                        specification.getOrderByUpdateTime() == OrderRule.ASC ?
+                                table.updateTime().asc() :
+                                table.updateTime().desc()
+                ).orderByIf(
+                        specification.getOrderByPrice() != null,
+                        specification.getOrderByPrice() == OrderRule.ASC ?
+                                table.price().asc() :
+                                table.price().desc()
+                )
+                .select(
+                        table.fetch(
+                                ItemPublicView.class
+                        )
+                )
+                .fetchPage(
+                        specification.getPage() != null ? specification.getPage() : 0,
+                        specification.getPageSize() != null ? specification.getPageSize() : 10
+                );
+    }
 }

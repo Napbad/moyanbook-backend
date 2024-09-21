@@ -190,6 +190,7 @@ ItemPublicView {
     }
 
     category {
+        id
         name
     }
 }
@@ -207,7 +208,7 @@ specification PublicItemSpecification {
     }
 
     flat(category) {
-        valueIn(id) as labelIds
+        valueIn(id) as categoryIds
     }
 
     page: Int?

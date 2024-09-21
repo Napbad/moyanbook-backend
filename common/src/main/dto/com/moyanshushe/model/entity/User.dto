@@ -181,14 +181,13 @@ specification UserSpecification {
 
 }
 
-specification PublicUserSpecification {
-    id
-    like(name)
-    type
-    email
-    phone
+    specification PublicUserSpecification {
+        id
+        like(name)
+        type
+        email
+        phone
 
-
-    page: Int?
-    pageSize: Int?
-}
+        page: Int?
+        pageSize: Int?
+    }

@@ -8,7 +8,6 @@ package com.moyanshushe.service.impl;
 import com.moyanshushe.mapper.ItemMapper;
 import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.model.entity.Item;
-import com.moyanshushe.model.entity.Fetchers;
 import com.moyanshushe.model.entity.ItemDraft;
 import com.moyanshushe.model.entity.ItemTable;
 import com.moyanshushe.service.ItemService;
@@ -101,22 +100,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Page<Item>   queryPublic(ItemSpecification specification) {
+    public Page<ItemPublicView> queryPublic(PublicItemSpecification specification) {
         log.info("查询物品: {}", specification);
-        return mapper.fetch(specification,
-                Fetchers.ITEM_FETCHER
-                        .userId()
-                        .images()
-                        .category()
-                        .description()
-                        .name()
-                        .status()
-                        .price()
-                        .user(Fetchers.USER_FETCHER
-                                .name()
-                                .type()
-                                .profileUrl()
-                        )
-        );
+        return mapper.queryPublic(specification);
     }
 }

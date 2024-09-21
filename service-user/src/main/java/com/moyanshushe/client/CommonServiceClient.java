@@ -26,10 +26,7 @@ import com.moyanshushe.model.dto.comment_likes.CommentLikeForAdd;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForDelete;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeSpecification;
 import com.moyanshushe.model.dto.coupon.*;
-import com.moyanshushe.model.dto.item.ItemForAdd;
-import com.moyanshushe.model.dto.item.ItemForDelete;
-import com.moyanshushe.model.dto.item.ItemForUpdate;
-import com.moyanshushe.model.dto.item.ItemSpecification;
+import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.model.dto.category.CategoryCreateInput;
 import com.moyanshushe.model.dto.category.CategoryForDelete;
 import com.moyanshushe.model.dto.category.CategorySpecification;
@@ -64,7 +61,7 @@ public interface CommonServiceClient {
     ResponseEntity<Result> deleteItems(@RequestBody ItemForDelete item);
 
     @PostMapping("/item/query-public")
-    ResponseEntity<Result> queryPublicItems(@RequestBody ItemSpecification specification);
+    ResponseEntity<Result> queryPublicItems(@RequestBody PublicItemSpecification specification);
 
     @PostMapping("address/add")
     ResponseEntity<Result> add(@RequestBody AddressCreateInput addressSubstance);

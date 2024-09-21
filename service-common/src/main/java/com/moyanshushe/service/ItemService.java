@@ -18,5 +18,5 @@ public interface ItemService {
 
     @NotNull Page<ItemView> query(ItemSpecification specification);
 
-    Page<Item> queryPublic(ItemSpecification specification);
+    Page<ItemPublicView> queryPublic(PublicItemSpecification specification);
 }

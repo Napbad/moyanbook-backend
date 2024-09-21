@@ -106,7 +106,7 @@ public class ItemController {
      */
     @Api
     @PostMapping("/query-public")
-    public ResponseEntity<Result> fetchPublic(@RequestBody ItemSpecification specification) {
+    public ResponseEntity<Result> fetchPublic(@RequestBody PublicItemSpecification specification) {
 
         return ResponseEntity.ok(Result.success(itemService.queryPublic(specification)));
     }
