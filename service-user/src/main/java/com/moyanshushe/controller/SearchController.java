@@ -5,16 +5,17 @@ package com.moyanshushe.controller;
     @Version: 0.1    
     @Date: 2024/7/13 上午9:36
     @Description:
+        此文件用于处理搜索相关的请求，包括物品、用户和会员的搜索操作。
 */
 
 import com.moyanshushe.client.CommonServiceClient;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.item.ItemSpecification;
 import com.moyanshushe.model.dto.item.PublicItemSpecification;
 import com.moyanshushe.model.dto.member.PublicMemberSpecification;
 import com.moyanshushe.model.dto.user.PublicUserSpecification;
 import com.moyanshushe.model.entity.Member;
 import com.moyanshushe.model.entity.User;
+import com.moyanshushe.service.ItemService;
 import com.moyanshushe.service.MemberInfoService;
 import com.moyanshushe.service.UserInfoService;
 import lombok.RequiredArgsConstructor;
@@ -38,108 +39,51 @@ public class SearchController {
     private final UserInfoService userInfoService;
     private final MemberInfoService memberInfoService;
     private final CommonServiceClient commonServiceClient;
+    private final ItemService itemService;
 
     /**
-     * @param specification
-     * ItemSpecification {
-     *     valueIn(id) as ids
-     *     like(name)
-     *     le(price) as maxPrice
-     *     ge(price) as minPrice
-     *     status
+     * 搜索物品
      *
-     *     flat(user) {
-     *         valueIn(id) as userIds
-     *     } 会被自动设置为空
-     *
-     *     flat(categories) {
-     *         valueIn(id) as labelIds
-     *     }
-     *
-     *     page: Int?
-     *     pageSize: Int?
-     *
-     *     orderByPrice: OrderRule?
-     *     orderByCreateTime: OrderRule?
-     *     orderByUpdateTime: OrderRule?
-     * }
-     * @return
+     * @param specification 物品搜索规格
+     * @return 返回搜索结果
      */
     @Api
     @PostMapping("/item")
     public ResponseEntity<Result> searchItem(@RequestBody PublicItemSpecification specification) {
 
-        return commonServiceClient.queryPublicItems(specification);
+        return ResponseEntity.ok(Result.success(itemService.queryPublic(specification)));
     }
 
     /**
      * 查找用户
      *
-     * @param userSpecification 用户信息
-     *                          UserSpecification {
-     *                          id (can only search one at one time)
-     *                          like(name)
-     *                          type
-     *                          email
-     *                          phone
-     *                          <p>
-     *                          page: Int?
-     *                          pageSize: Int?
-     *                          }
-     * @return 注册成功返回200和成功消息，失败返回400和错误消息
+     * @param userSpecification 用户搜索规格
+     * @return 返回搜索结果
      */
     @Api
     @PostMapping({"/user"})
     public ResponseEntity<Result> queryUser(@RequestBody PublicUserSpecification userSpecification) {
-        log.info("user register: {}", userSpecification);
+        log.info("query user: {}", userSpecification);
 
-        Page<User> success = userInfoService.queryUser(userSpecification);
+        Page<User> result = userInfoService.queryUser(userSpecification);
 
-        return
-                ResponseEntity.ok(Result.success(success));
+        return ResponseEntity.ok(Result.success(result));
     }
 
     /**
-     * 查找用户
+     * 查找会员
      *
-     * @param memberSpecification 查询信息
-     *                            MemberSpecification {
-     *                            valueIn(id) as ids 字段为ids 的集合，表示查询在这个ids中的用户，为空则不考虑
-     *                            like(name) 类似数据库的like，匹配名字
-     *                            status
-     *                            address {
-     *                            id
-     *                            }
-     *                            email
-     *                            phone
-     *                            createPerson{
-     *                            id
-     *                            }
-     *                            updatePerson{
-     *                            id
-     *                            }
-     *                            ge(createTime) greater than
-     *                            le(createTime) less than
-     *                            ge(updateTime)
-     *                            le(updateTime)
-     *                            可选，默认0页，10条/页
-     *                            <p>
-     *                            page: Int?
-     *                            pageSize: Int?
-     *                            }
-     * @return 注册成功返回200和成功消息，失败返回400和错误消息
+     * @param memberSpecification 会员搜索规格
+     * @return 返回搜索结果
      */
     @Api
     @PostMapping({"/member"})
-    public ResponseEntity<Result> queryUser(@RequestBody PublicMemberSpecification memberSpecification) {
-        log.info("member query: {}", memberSpecification);
+    public ResponseEntity<Result> queryMember(@RequestBody PublicMemberSpecification memberSpecification) {
+        log.info("query member: {}", memberSpecification);
 
-        Page<Member> success = memberInfoService.queryMember(memberSpecification);
+        Page<Member> result = memberInfoService.queryMember(memberSpecification);
 
-        return
-                ResponseEntity.ok(
-                        Result.success(
-                                success));
+        return ResponseEntity.ok(Result.success(result));
     }
 
 }

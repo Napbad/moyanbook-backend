@@ -9,7 +9,6 @@ import com.moyanshushe.constant.AddressConstant;
 import com.moyanshushe.constant.WebIOConstant;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.dto.address_part2.*;
-import com.moyanshushe.model.entity.AddressPart2;
 import com.moyanshushe.service.AddressPart2Service;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.Page;

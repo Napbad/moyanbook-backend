@@ -37,6 +37,11 @@ CommentPublicView {
     children*
 }
 
+CommentUpdateView {
+    id
+    content
+}
+
 CommentView {
     id
     content

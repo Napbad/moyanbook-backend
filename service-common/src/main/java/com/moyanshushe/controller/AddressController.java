@@ -40,15 +40,15 @@ public class AddressController {
     public ResponseEntity<Result> query(
             @RequestBody AddressSpecification addressSpecification) {
 
-        log.info("Received query request with specification: {}", addressSpecification);
+                                        log.info("Received query request with specification: {}", addressSpecification);
 
-        Page<AddressView> page = addressService.query(addressSpecification);
+                                        Page<AddressView> page = addressService.query(addressSpecification);
 
-        log.info("Returning address list with page: {}", page);
+                                        log.info("Returning address list with page: {}", page);
 
-        return ResponseEntity.ok(
-                Result.success(page)
-        );
+                                        return ResponseEntity.ok(
+                                                Result.success(page)
+                                        );
     }
 
     /**

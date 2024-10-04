@@ -2,7 +2,6 @@ package com.moyanshushe.controller;
 
 import com.moyanshushe.constant.ItemConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.item.*;
 import com.moyanshushe.service.ItemService;
 import com.moyanshushe.utils.AliOssUtil;
 import lombok.RequiredArgsConstructor;
@@ -81,7 +80,7 @@ public class ItemController {
                         aliOssUtil::checkUrlIsAliOss
                 );
 
-        return ResponseEntity.ok(Result.success(itemService.update(itemForUpdate)));
+        return ResponseEntity.ok(Result.success(itemService.update(itemForUpdate))) ;
     }
 
     /**

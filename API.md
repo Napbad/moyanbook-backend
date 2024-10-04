@@ -968,8 +968,8 @@ status:
 查询优惠券
 
 status:
-             NORMAL = 1;
-         EXPIRED = 2;
+        NORMAL = 1;
+        EXPIRED = 2;
 输入：
 ```json
 {
@@ -1037,24 +1037,24 @@ type:   normal = 1;
 输出：
 ```json
 {
-    "id": null,
-    "name": null,
-    "price": null,
-    "description": null,
-    "status": null,
-    "images": [
-        {
-            "imageUrl": null
-        }
-    ],
-    "user": {
-        "id": 0     ,
-        "name": null
-    },
-    "category": {
-        "id": 0,
-        "name": null
-    }   
+  "id": null,
+  "name": null,
+  "price": null,
+  "description": null,
+  "status": null,
+  "images": [
+    {
+      "imageUrl": null
+    }
+  ],
+  "user": {
+    "id": 0     ,
+    "name": null
+  },
+  "category": {
+    "id": 0,
+    "name": null
+  }   
 }
 ```
 
@@ -1065,25 +1065,245 @@ type:   normal = 1;
 输入：
 ```json
 {
-    "id": null,
-    "name": null,
-    "type": null,
-    "email": null,
-    "phone": null,
-    "page": null,
-    "pageSize": null
+  "id": null,
+  "name": null,
+  "type": null,
+  "email": null,
+  "phone": null,
+  "page": null,
+  "pageSize": null
 }
 ```
 
 输出：
 ```json
 {
-    "id": 0,
-    "name": "",
-    "gender": "",
-    "status": "",
-    "profileUrl": "",
-    "type": ""
+  "id": 0,
+  "name": "",
+  "gender": "",
+  "status": "",
+  "profileUrl": "",
+  "type": ""
 }
 ```
+
+## CommentController
+
+### addComment (/user/comment/add)
+
+添加评论
+
+**输入**:
+
+```json
+{
+  "content": "这是一个评论",
+  "commenterId": 1,
+  "labelId": 2,
+  "parentId": 1,
+  "commentTime": 1690000000000
+}
+```
+
+**返回**:
+
+```json
+{
+  "message": "评论成功"
+}
+```
+
+### deleteComment (/user/comment/delete)
+
+删除评论
+
+**输入**:
+
+```json
+{
+  "commenterId": 1,
+  "ids": [1,2,3]
+}
+```
+
+**返回**:
+
+```json
+{
+  "message": "评论删除成功"
+}
+```
+
+### updateComment (/user/comment/update)
+
+更新评论
+
+**输入**:
+
+```json
+{
+  "commenterId": 1,
+  "id": 1,
+  "content": "string"
+}
+```
+
+**返回**:
+
+```json
+{
+  "data": {
+    "id": 1,
+    "content": "string"
+  },
+  "message": "评论更新成功"
+}
+```
+
+### queryComment (/user/comment/query)
+
+查询评论
+
+**输入**:
+
+```json
+{
+  "specification": "object"
+}
+```
+
+**返回**:
+
+```json
+{
+  "data": {
+    "rows": [
+      {
+        "id": 1,
+        "content": "string",
+        "commenter": {
+          "id": 1,
+          "name": "string",
+          "type": "string",
+          "profileUrl": "string"
+        },
+        "label": {
+          "id": 1,
+          "name": "string"
+        },
+        "parentId": 2,
+        "commentTime": "2023-08-08T08:08:08.888Z",
+        "children": [],
+        "likes": 10
+      }
+    ],
+    "totalRowCount": 100,
+    "totalPageCount": 10
+  },
+  "message": "评论查询成功"
+}
+```
+
+## CommentLikeController
+
+### addCommentLike (/user/comment-like/add)
+
+添加点赞
+
+**输入**:
+
+```json
+{
+  "userId": "int",
+  "commentId": "int"
+}
+```
+
+**返回**:
+
+```json
+{
+  "message": "点赞成功"
+}
+```
+
+### deleteCommentLike (/user/comment-like/delete)
+
+删除点赞
+
+**输入**:
+
+```json
+{
+  "userId": "int",
+  "commentId": "int"
+}
+```
+
+**返回**:
+
+```json
+{   
+  "message": "取消点赞成功"
+}
+```
+
+### queryCommentLike (/user/comment-like/query)
+
+查询点赞情况
+
+**输入**:
+
+```json
+{
+  "userId": "int",
+  "commentIds": "list of int",
+  "likeTimeMax": "time-string",
+  "likeTimeMin": "time-string",
+
+  "page": "int",
+  "pageSize": "int"
+}
+```
+
+**返回**:
+
+```json
+{
+  "code": "int 0 -> fail, 1 -> success",
+
+  "data": {
+    "rows": [
+      {
+        "id": "1",
+        "user": {
+          "id": 123,
+          "name": "张三",
+          "type": 0,
+          "status": 1,
+          "profileUrl": "https://example.com/profile/u123"
+        },
+        "comment": {
+          "id": 456,
+          "content": "这是一个示例评论。",
+          "likes": 15,
+          "commenter": {
+            "id": 789,
+            "name": "李四",
+            "type": 0,
+            "status": 1,
+            "profileUrl": "https://example.com/profile/u789"
+          }
+        },
+        "likeTime": "2023-10-01T10:30:00Z"
+      }
+    ],
+    "totalRowCount": 100,
+    "totalPageCount": 10
+  },
+
+  "message": "查询点赞成功"
+}
+```
+
 

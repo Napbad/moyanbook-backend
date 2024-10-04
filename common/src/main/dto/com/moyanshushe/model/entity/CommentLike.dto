@@ -11,6 +11,30 @@ CommentLikeForDelete {
     commentId
 }
 
+CommentLikeView {
+    id
+    user {
+        id
+        name
+        type
+        status
+        profileUrl
+    }
+    comment {
+        id
+        content
+        likes
+        commenter {
+            id
+            name
+            type
+            status
+            profileUrl
+        }
+    }
+    likeTime
+}
+
 specification CommentLikeSpecification {
     userId
     commentId

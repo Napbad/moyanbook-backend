@@ -1,22 +1,14 @@
 package com.moyanshushe.controller;
 
-
-
-/*
-    @Author: Napbad
-    @Version: 0.1    
-    @Date: 8/12/24
-    @Description: 
-
-*/
-
 import com.moyanshushe.client.CommonServiceClient;
+import com.moyanshushe.constant.CommentConstant;
 import com.moyanshushe.exception.NoAuthorityException;
 import com.moyanshushe.exception.common.InputInvalidException;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForAdd;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForDelete;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeSpecification;
+import com.moyanshushe.service.CommentLikeService;
 import com.moyanshushe.utils.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.babyfish.jimmer.client.meta.Api;
@@ -33,71 +25,52 @@ import java.util.Objects;
  */
 @Api
 @RestController
-@RequestMapping({"/commentLike-like"})
+@RequestMapping({""})
 @RequiredArgsConstructor
 public class CommentLikeController {
-    private final CommonServiceClient commonServiceClient;
+    private final CommentLikeService commentLikeService;
 
     /**
      * 添加点赞
      *
      * @param commentLike 点赞信息
-     *                    CommentLikeForAdd {
-     *                    userId！
-     *                    commentId！
-     *                    }
      * @return 添加结果
      */
     @Api
-    @PostMapping("/add")
+    @PostMapping("/user/comment-like/add")
     public ResponseEntity<Result> addCommentLike(@RequestBody CommentLikeForAdd commentLike) {
-
         if (!Objects.equals(commentLike.getUserId(), UserContext.getUserId())) {
             throw new NoAuthorityException();
         }
-
-        return commonServiceClient.addCommentLike(commentLike);
+        commentLikeService.add(commentLike);
+        return ResponseEntity.ok(Result.success(CommentConstant.COMMENT_LIKE_SUCCESS));
     }
 
     /**
      * 删除点赞
      *
      * @param commentLike 点赞信息
-     *                    CommentLikeForDelete {
-     *                    userId!
-     *     commentId!
-     * }
      * @return 删除结果
      */
     @Api
-    @PostMapping("/delete")
+    @PostMapping("/user/comment-like/delete")
     public ResponseEntity<Result> deleteCommentLike(@RequestBody CommentLikeForDelete commentLike) {
-
         if (!Objects.equals(commentLike.getUserId(), UserContext.getUserId())) {
             throw new NoAuthorityException();
         }
-
-        return commonServiceClient.deleteCommentLike(commentLike);
+        commentLikeService.delete(commentLike);
+        return ResponseEntity.ok(Result.success(CommentConstant.COMMENT_DELETE_SUCCESS));
     }
 
-
     /**
-     * @param specification {
-     *                       CommentLikeSpecification {
-     *     userId
-     *     commentId
-     *     ge(likeDate)
-     *     le(likeDate)
+     * 查询点赞情况
      *
-     *     page: Int?
-     *     pageSize: Int?
-     * }
-     * }
-     * @return 点赞过的
+     * @param specification 查询条件
+     * @return 点赞过的评论
      */
     @Api
-    @PostMapping("/query")
+    @PostMapping("/user/comment-like/query")
     public ResponseEntity<Result> queryCommentLike(@RequestBody CommentLikeSpecification specification) {
-        return commonServiceClient.queryCommentLike(specification);
+        return ResponseEntity.ok(Result.success(commentLikeService.query(specification)));
     }
 }

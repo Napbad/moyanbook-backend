@@ -9,7 +9,6 @@ import com.moyanshushe.constant.AddressConstant;
 import com.moyanshushe.constant.WebIOConstant;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.dto.address_part1.*;
-import com.moyanshushe.model.entity.AddressPart1;
 import com.moyanshushe.service.AddressPart1Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

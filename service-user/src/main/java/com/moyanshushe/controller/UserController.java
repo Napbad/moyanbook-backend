@@ -1,18 +1,19 @@
 package com.moyanshushe.controller;
 
 import com.moyanshushe.client.*;
-import com.moyanshushe.constant.AccountConstant;
-import com.moyanshushe.constant.JwtClaimsConstant;
-import com.moyanshushe.constant.VerifyConstant;
-import com.moyanshushe.constant.WebIOConstant;
+import com.moyanshushe.constant.*;
 import com.moyanshushe.exception.NoAuthorityException;
 import com.moyanshushe.exception.common.InputInvalidException;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.UserLoginResult;
 import com.moyanshushe.model.dto.address.AddressCreateInput;
 import com.moyanshushe.model.dto.address.AddressSpecification;
+import com.moyanshushe.model.dto.address.AddressView;
 import com.moyanshushe.model.dto.address_part1.AddressPart1Specification;
+import com.moyanshushe.model.dto.address_part1.AddressPart1View;
 import com.moyanshushe.model.dto.address_part2.AddressPart2Specification;
+import com.moyanshushe.model.dto.address_part2.AddressPart2View;
+import com.moyanshushe.model.dto.category.CategorySubstance;
 import com.moyanshushe.model.dto.coupon.CouponSpecification;
 import com.moyanshushe.model.dto.coupon.CouponView;
 import com.moyanshushe.model.dto.item.*;
@@ -22,25 +23,25 @@ import com.moyanshushe.model.dto.order.OrderForDelete;
 import com.moyanshushe.model.dto.order.OrderForUpdate;
 import com.moyanshushe.model.dto.order.OrderSpecification;
 import com.moyanshushe.model.dto.user.*;
+import com.moyanshushe.model.entity.Address;
+import com.moyanshushe.model.entity.Order;
 import com.moyanshushe.model.entity.User;
 import com.moyanshushe.properties.JwtProperties;
-import com.moyanshushe.service.UserService;
+import com.moyanshushe.service.*;
+import com.moyanshushe.service.impl.AddressServiceImpl;
+import com.moyanshushe.service.impl.CouponServiceImpl;
 import com.moyanshushe.utils.AliOssUtil;
 import com.moyanshushe.utils.UserContext;
 import com.moyanshushe.utils.JwtUtil;
 import com.moyanshushe.utils.security.AccountUtil;
 import org.babyfish.jimmer.Page;
 import org.babyfish.jimmer.client.meta.Api;
-import org.babyfish.jimmer.sql.ast.tuple.Tuple2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -58,14 +59,36 @@ public class UserController {
     private final JwtProperties jwtProperties;
     private final CommonServiceClient commonServiceClient;
     private final AliOssUtil aliOssUtil;
+    private final ItemService itemService;
+    private final CategoryService categoryService;
+    private final AddressService addressService;
+    private final AddressPart1Service addressPart1Service;
+    private final AddressPart2Service addressPart2Service;
+    private final OrderService orderService;
+    private final CouponService couponService;
 
     // 构造函数：初始化用户服务和JWT属性
     public UserController(UserService userService,
                           JwtProperties jwtProperties,
-                          CommonServiceClient commonServiceClient, AliOssUtil aliOssUtil) {
+                          CommonServiceClient commonServiceClient,
+                          AliOssUtil aliOssUtil,
+                          ItemService itemService,
+                          CategoryService categoryService,
+                          AddressService addressService,
+                          AddressPart1Service addressPart1Service,
+                          AddressPart2Service addressPart2Service,
+                          OrderService orderService,
+                          CouponService couponService) {
         this.userService = userService;
         this.jwtProperties = jwtProperties;
         this.commonServiceClient = commonServiceClient;
+        this.itemService = itemService;
+        this.categoryService = categoryService;
+        this.addressService = addressService;
+        this.addressPart1Service = addressPart1Service;
+        this.addressPart2Service = addressPart2Service;
+        this.orderService = orderService;
+        this.couponService = couponService;
 
         log.info("UserController initialized");
         this.aliOssUtil = aliOssUtil;
@@ -156,8 +179,8 @@ public class UserController {
         User update = this.userService.userUpdate(userForUpdate);
 
         return
-                 ResponseEntity.ok(Result.success(AccountConstant.ACCOUNT_CHANGE_SUCCESS,
-                         new UserUpdateView(update)));
+                ResponseEntity.ok(Result.success(AccountConstant.ACCOUNT_CHANGE_SUCCESS,
+                        new UserUpdateView(update)));
     }
 
     /**
@@ -226,13 +249,13 @@ public class UserController {
         int count = 0;
 
         if (AccountUtil.checkEmail(userForVerify.getEmail())) {
-           count++;
+            count++;
         }
         if (AccountUtil.checkPhone(userForVerify.getPhone())) {
             count++;
         }
 
-        if (count != 1){
+        if (count != 1) {
             throw new InputInvalidException("only one can be sent captcha to.");
         }
 
@@ -250,7 +273,7 @@ public class UserController {
     @Api
     @PostMapping("/item/query")
     public ResponseEntity<Result> fetchItem(@RequestBody ItemSpecification specification) {
-        return commonServiceClient.queryItems(specification);
+        return ResponseEntity.ok(Result.success(itemService.query(specification)));
     }
 
     /**
@@ -267,7 +290,13 @@ public class UserController {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.addItem(itemForAdd);
+        itemForAdd.getImages().stream()
+                .map(ItemForAdd.TargetOf_images::getImageUrl)
+                .forEach(
+                        aliOssUtil::checkUrlIsAliOss
+                );
+
+        return ResponseEntity.ok(Result.success(itemService.add(itemForAdd)));
     }
 
     /**
@@ -279,7 +308,12 @@ public class UserController {
     @Api
     @PostMapping("/item/update")
     public ResponseEntity<Result> updateItem(@RequestBody ItemForUpdate itemForUpdate) {
-        return commonServiceClient.updateItem(itemForUpdate);
+        Objects.requireNonNull(itemForUpdate.getImages()).stream()
+                .map(ItemForUpdate.TargetOf_images::getImageUrl)
+                .forEach(
+                        aliOssUtil::checkUrlIsAliOss
+                );
+        return ResponseEntity.ok(Result.success(itemService.update(itemForUpdate)));
     }
 
     /**
@@ -293,7 +327,9 @@ public class UserController {
     public ResponseEntity<Result> deleteItem(@RequestBody ItemForDelete itemForDelete) {
         itemForDelete.setOperatorId(UserContext.getUserId());
 
-        return commonServiceClient.deleteItems(itemForDelete);
+        itemService.delete(itemForDelete);
+
+        return ResponseEntity.ok(Result.success(ItemConstant.ITEM_DELETE_SUCCESS));
     }
 
     /**
@@ -305,7 +341,9 @@ public class UserController {
     @Api
     @PostMapping("/category/query")
     public ResponseEntity<Result> queryCategories(@RequestBody CategorySpecification category) {
-        return commonServiceClient.queryCategories(category);
+        Page<CategorySubstance> result = categoryService.query(category);
+        return ResponseEntity.ok(Result.success(result));
+
     }
 
     /**
@@ -329,25 +367,47 @@ public class UserController {
     @Api
     @PostMapping("/address/query")
     public ResponseEntity<Result> getAddress(@RequestBody AddressSpecification addressForQuery) {
-        return commonServiceClient.queryAddress(addressForQuery);
+        log.info("Received query request with specification: {}", addressForQuery);
+
+        Page<AddressView> page = addressService.query(addressForQuery);
+
+        log.info("Returning address list with page: {}", page);
+
+        return ResponseEntity.ok(
+                Result.success(page)
+        );
     }
 
     @Api
     @PostMapping("/address/add")
-    public ResponseEntity<Result> addAddress(@RequestBody AddressCreateInput addressForQuery) {
-        return commonServiceClient.addAddress(addressForQuery);
+    public ResponseEntity<Result> addAddress(@RequestBody AddressCreateInput address) {
+        log.info("Received add request with address: {}", address);
+
+        Address result = addressService.add(address);
+
+        log.info("Returning add result: {}", result);
+
+        return ResponseEntity.ok(
+                Result.success(AddressConstant.ADDRESS_ADD_SUCCESS, result)
+        );
     }
 
     @Api
     @PostMapping("/address-part1/query")
     public ResponseEntity<Result> getAddressPart1(@RequestBody AddressPart1Specification specification) {
-        return commonServiceClient.queryAddressPart1(specification);
+        log.info("Received read request with specification: {}", specification);
+
+        Page<AddressPart1View> page = addressPart1Service.query(specification);
+
+        return ResponseEntity.ok(Result.success(page));
     }
 
     @Api
     @PostMapping("/address-part2/query")
     public ResponseEntity<Result> getAddressPart2(@RequestBody AddressPart2Specification specification) {
-        return commonServiceClient.readAddressPart2(specification);
+        Page<AddressPart2View> page = addressPart2Service.query(specification);
+
+        return ResponseEntity.ok(Result.success(page));
     }
 
     /**
@@ -380,7 +440,9 @@ public class UserController {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.addOrder(orderForAdd);
+        Order result = orderService.add(orderForAdd);
+        return ResponseEntity.ok(
+                Result.success(OrderConstant.ORDER_ADD_SUCCESS));
     }
 
     /**
@@ -402,23 +464,30 @@ public class UserController {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.updateOrder(orderForUpdate);
+        Boolean result = orderService.update(orderForUpdate);
+
+        return ResponseEntity.ok(
+                Boolean.TRUE.equals(result) ? Result.success(OrderConstant.ORDER_UPDATE_SUCCESS)
+                        : Result.error(OrderConstant.ORDER_UPDATE_FAIL));
     }
 
     /**
      * 根据指定条件删除订单。
      *
-     * @param itemForDelete 删除订单的条件
+     * @param orderForDelete 删除订单的条件
      * @return 返回删除结果
      */
     @Api
     @PostMapping("/order/delete")
-    public ResponseEntity<Result> deleteOrder(@RequestBody OrderForDelete itemForDelete) {
-        if (!Objects.equals(itemForDelete.getUserId(), UserContext.getUserId())) {
+    public ResponseEntity<Result> deleteOrder(@RequestBody OrderForDelete orderForDelete) {
+        if (!Objects.equals(orderForDelete.getUserId(), UserContext.getUserId())) {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.deleteOrder(itemForDelete);
+        orderService.delete(orderForDelete);
+
+        return ResponseEntity.ok(
+                Result.success(OrderConstant.ORDER_DELETE_SUCCESS));
     }
 
     /**
@@ -429,10 +498,14 @@ public class UserController {
      */
     @Api
     @PostMapping("/coupon/query")
-    public Page<CouponView> getCoupon(@RequestBody CouponSpecification specification) {
+    public ResponseEntity<Result> getCoupon(@RequestBody CouponSpecification specification) {
         // 调用commonServiceClient的getCoupon方法获取优惠券信息，并将结果封装成成功响应返回
         specification.setUserId(UserContext.getUserId());
 
-        return commonServiceClient.queryCoupon(specification);
+        Page<CouponView> page = couponService.query(specification, CouponView.class);
+
+        return ResponseEntity.ok(
+                Result.success(page)
+        );
     }
 }

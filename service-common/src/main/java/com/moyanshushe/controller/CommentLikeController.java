@@ -9,15 +9,10 @@ package com.moyanshushe.controller;
 
 import com.moyanshushe.constant.CommentConstant;
 import com.moyanshushe.model.Result;
-import com.moyanshushe.model.dto.comment.CommentForAdd;
-import com.moyanshushe.model.dto.comment.CommentForDelete;
-import com.moyanshushe.model.dto.comment.CommentForUpdate;
-import com.moyanshushe.model.dto.comment.CommentSpecification;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForAdd;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeForDelete;
 import com.moyanshushe.model.dto.comment_likes.CommentLikeSpecification;
 import com.moyanshushe.service.CommentLikeService;
-import com.moyanshushe.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.babyfish.jimmer.client.meta.Api;
 import org.springframework.http.ResponseEntity;

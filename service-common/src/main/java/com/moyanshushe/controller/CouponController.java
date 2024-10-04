@@ -43,11 +43,11 @@ public class CouponController {
     public ResponseEntity<Result> query(
             @RequestBody CouponSpecification couponSpecification) {
 
-        Page<CouponView> page = service.query(couponSpecification, CouponView.class);
+                    Page<CouponView> page = service.query(couponSpecification, CouponView.class);
 
-        return ResponseEntity.ok(
-                Result.success(page)
-        );
+                    return ResponseEntity.ok(
+                            Result.success(page)
+                    );
     }
 
     /**

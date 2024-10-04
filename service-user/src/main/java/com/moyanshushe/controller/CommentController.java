@@ -11,12 +11,14 @@ package com.moyanshushe.controller;
 */
 
 import com.moyanshushe.client.CommonServiceClient;
+import com.moyanshushe.constant.CommentConstant;
 import com.moyanshushe.exception.NoAuthorityException;
 import com.moyanshushe.model.Result;
 import com.moyanshushe.model.dto.comment.CommentForAdd;
 import com.moyanshushe.model.dto.comment.CommentForDelete;
 import com.moyanshushe.model.dto.comment.CommentForUpdate;
 import com.moyanshushe.model.dto.comment.CommentSpecification;
+import com.moyanshushe.service.CommentService;
 import com.moyanshushe.utils.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.babyfish.jimmer.client.meta.Api;
@@ -33,35 +35,27 @@ import java.util.Objects;
  */
 @Api
 @RestController
-@RequestMapping({"/comment"})
 @RequiredArgsConstructor
 public class CommentController {
-    private final CommonServiceClient commonServiceClient;
+
+    private final CommentService commentService;
 
     /**
      * 添加评论
      *
      * @param comment 评论信息
-     *                CommentForAdd {
-     *                content
-     *                commenterId!
-     *                itemId!
-     *                parentId
-     *                commentTime!
-     *                likes
-     *                dislikes
-     *                }
      * @return 添加结果
      */
     @Api
-    @PostMapping("/add")
+    @PostMapping("/user/comment/add")
     public ResponseEntity<Result> addComment(@RequestBody CommentForAdd comment) {
 
         if (!Objects.equals(comment.getCommenterId(), UserContext.getUserId())) {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.addComment(comment);
+        commentService.add(comment);
+        return ResponseEntity.ok(Result.success(CommentConstant.COMMENT_SUCCESS));
     }
 
     /**
@@ -71,41 +65,44 @@ public class CommentController {
      * @return 删除结果
      */
     @Api
-    @PostMapping("/delete")
+    @PostMapping("/user/comment/delete")
     public ResponseEntity<Result> deleteComment(@RequestBody CommentForDelete comment) {
 
         if (!Objects.equals(comment.getCommenterId(), UserContext.getUserId())) {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.deleteComment(comment);
+        commentService.delete(comment);
+        return ResponseEntity.ok(Result.success(CommentConstant.COMMENT_DELETE_SUCCESS));
+
     }
 
     /**
      * 更新评论
      *
      * @param comment 评论信息
-     *                CommentForUpdate {
-     *                id!
-     *                content
-     *                commenterId!
-     *                }
      * @return 更新结果
      */
     @Api
-    @PostMapping("/update")
+    @PostMapping("/user/comment/update")
     public ResponseEntity<Result> updateComment(@RequestBody CommentForUpdate comment) {
 
         if (!Objects.equals(comment.getCommenterId(), UserContext.getUserId())) {
             throw new NoAuthorityException();
         }
 
-        return commonServiceClient.updateComment(comment);
+        return ResponseEntity.ok(Result.success(
+                CommentConstant.COMMENT_UPDATE_SUCCESS,
+                commentService.update(comment)));
+
     }
 
     @Api
-    @PostMapping("/query")
+    @PostMapping("/user/comment/query")
     public ResponseEntity<Result> queryComment(@RequestBody CommentSpecification specification) {
-        return commonServiceClient.queryComment(specification);
+        return ResponseEntity.ok(
+                Result.success(
+                        CommentConstant.COMMENT_QUERY_SUCCESS,
+                        commentService.query(specification)));
     }
 }
